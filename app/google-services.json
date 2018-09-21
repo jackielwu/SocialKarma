@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1079064396038",
+    "firebase_url": "https://social-karma-842b3.firebaseio.com",
+    "project_id": "social-karma-842b3",
+    "storage_bucket": "social-karma-842b3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1079064396038:android:2c67bdaed1f150f8",
+        "android_client_info": {
+          "package_name": "cs407.socialkarmaapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1079064396038-iqgos4lptvl5dtj2rkl2e5lc1gg1q627.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWw3ijOUTGWzLmD76y-B6Box42JwUtvsc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
