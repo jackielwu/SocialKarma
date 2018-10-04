@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void openListview() {
+    public void openMain() {
         setContentView(R.layout.activity_main);
         //initializing objects
         list = new ArrayList<>();
