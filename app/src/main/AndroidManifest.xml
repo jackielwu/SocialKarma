@@ -13,9 +13,6 @@
         android:supportsRtl="true"
         android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
 
-
-
-
     <activity
 
 
@@ -27,6 +24,10 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".SignUpActivity"
+            android:theme="@style/AppFullScreenTheme">
         </activity>
     </application>
 
