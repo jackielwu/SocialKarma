@@ -11,14 +11,25 @@ public class list_item {
         this.comment_num = comment_num;
     }
 
+    public list_item(int vote_num, String name, String context) {
+        //for commnent in individual post
+        this(vote_num, 0, name, context);
+    }
+
     public int getVote_num() {
         return vote_num;
     }
 
+    public String getVote_num_string() {
+        return vote_num+"";
+    }
     public int getComment_num() {
         return comment_num;
     }
 
+    public String getComment_num_String() {
+        return "comment" + comment_num;
+    }
     public String getName() {
         return name;
     }

@@ -20,7 +20,7 @@ import java.util.List;
  */
 
 //we need to extend the ArrayAdapter class as we are building an adapter
-public class MyListAdapter extends ArrayAdapter<list_item> {
+public class MyPostAdapter extends ArrayAdapter<list_item> {
 
     //the list values in the List of type hero
     List<list_item> item_list;
@@ -32,7 +32,7 @@ public class MyListAdapter extends ArrayAdapter<list_item> {
     int resource;
 
     //constructor initializing the values
-    public MyListAdapter(Context context, int resource, List<list_item> item_list) {
+    public MyPostAdapter(Context context, int resource, List<list_item> item_list) {
         super(context, resource, item_list);
         this.context = context;
         this.resource = resource;
@@ -55,20 +55,15 @@ public class MyListAdapter extends ArrayAdapter<list_item> {
         TextView textViewName = view.findViewById(R.id.name);
         TextView textViewContext = view.findViewById(R.id.context);
         TextView textViewVote = view.findViewById(R.id.upvote_num);
-        TextView textViewComment = view.findViewById(R.id.commentButton);
-
         //getting the hero of the specified position
         list_item item = item_list.get(position);
 
         //adding values to the list item
         textViewName.setText(item.getName());
         textViewContext.setText(item.getContext());
-        textViewVote.setText(item.getVote_num_string());
-        try {
-            textViewComment.setText(item.getComment_num_String());
-        }catch (NullPointerException e) {
-            e.getMessage();
-        }
+        textViewVote.setText(item.getVote_num());
+
+
         //finally returning the view
         return view;
     }

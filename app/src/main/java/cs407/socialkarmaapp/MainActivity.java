@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -13,6 +14,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,13 +33,18 @@ public class MainActivity extends AppCompatActivity {
 
     List<list_item> list;
     List<meetup_item> meetupList;
+    List<list_item> commentList;
 
     //the listview
     ListView listView;
+    ListView listView1;
+
 
     private TextView forgotPasswordLink;
     EditText e1, e2;
     FirebaseAuth auth;
+
+
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -62,6 +69,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+
+
+
         Button login_btn = (Button)findViewById(R.id.button2);
 
         e1 = (EditText)findViewById(R.id.editText2);
@@ -92,7 +103,9 @@ public class MainActivity extends AppCompatActivity {
                 // Code here executes on main thread after user presses button
                 //openMain();
                 //openProfile();
-                openMeetup();
+                //openMeetup();
+                //openMap();
+                openPostIndividual();
             }
         });
 //        mTextMessage = (TextView) findViewById(R.id.message);
@@ -188,5 +201,34 @@ public class MainActivity extends AppCompatActivity {
 
         //attaching adapter to the listview
         listView.setAdapter(adapter);
+    }
+
+    public void openMap() {
+        setContentView(R.layout.activity_map);
+
+    }
+
+    public void openPostIndividual() {
+        setContentView(R.layout.activity_individual_post);
+        //list
+        list = new ArrayList<>();
+        commentList = new ArrayList<>();
+        listView = (ListView) findViewById(R.id.posted_item);
+        //listView1 = (ListView) findViewById(R.id.comment_list);
+        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+        commentList.add(new list_item(0, "Comment", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+        commentList.add(new list_item(0, "Comment", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+        commentList.add(new list_item(0, "Comment", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+        commentList.add(new list_item(0, "Comment", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+        commentList.add(new list_item(0, "Comment", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+        commentList.add(new list_item(0, "Comment", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+
+        MyListAdapter adapter = new MyListAdapter(this, R.layout.list_item, list);
+
+        MyListAdapter adapter1 = new MyListAdapter(this, R.layout.comment_item, commentList);
+
+        listView.setAdapter(adapter);
+        listView.setAdapter(adapter1);
+
     }
 }
