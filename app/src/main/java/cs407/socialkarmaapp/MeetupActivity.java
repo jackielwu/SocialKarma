@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -18,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import cs407.socialkarmaapp.Adapters.MeetupAdapter;
+import cs407.socialkarmaapp.Adapters.MeetupDelegate;
 import cs407.socialkarmaapp.Helpers.APIClient;
 import cs407.socialkarmaapp.Models.Meetup;
 import okhttp3.Call;
@@ -41,11 +43,33 @@ public class MeetupActivity extends AppCompatActivity {
 
         meetupRecyclerView = findViewById(R.id.recyclerView_meetup);
         meetupRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        meetupAdapter = new MeetupAdapter(new ArrayList<Meetup>(), this);
+        meetupAdapter = new MeetupAdapter(new ArrayList<Meetup>(), this, new MeetupDelegate() {
+            @Override
+            public void rsvpButtonClicked(String meetupId) {
+                APIClient.INSTANCE.postRsvpMeetup(meetupId, new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        Toast.makeText(MeetupActivity.this, "Failed to RSVP to meetup. Please try again later.", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        getMeetups();
+                    }
+                });
+            }
+        });
         meetupRecyclerView.setAdapter(meetupAdapter);
 
         toolbar = findViewById(R.id.toolbar_meetup_detail);
         setSupportActionBar(toolbar);
+        getMeetups();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
         getMeetups();
     }
 
@@ -86,7 +110,7 @@ public class MeetupActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        meetupAdapter.addToMeetups(meetups);
+                        meetupAdapter.setMeetups(meetups);
                     }
                 });
             }

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/LightGrey"
+    android:background="@color/DarkerGhostWhite"
     tools:context=".AddMeetupActivity">
 
     <android.support.v7.widget.Toolbar
@@ -52,6 +52,21 @@
                 tools:layout_editor_absoluteY="196dp" />
 
             <TextView
+                android:id="@+id/textView13"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="Description" />
+
+            <EditText
+                android:id="@+id/editText_meetup_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:ems="10"
+                android:inputType="textMultiLine" />
+
+            <TextView
                 android:id="@+id/textView8"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -67,7 +82,9 @@
                 android:layout_margin="8dp"
                 android:ems="10"
                 android:hint="Date"
-                android:inputType="date" />
+                android:clickable="true"
+                android:inputType="none"
+                android:focusable="false" />
 
             <EditText
                 android:id="@+id/editText_startTime"
@@ -76,7 +93,9 @@
                 android:layout_margin="8dp"
                 android:ems="10"
                 android:hint="Time"
-                android:inputType="time" />
+                android:clickable="true"
+                android:inputType="none"
+                android:focusable="false" />
 
             <TextView
                 android:id="@+id/textView9"
@@ -94,7 +113,9 @@
                 android:layout_margin="8dp"
                 android:ems="10"
                 android:hint="Date"
-                android:inputType="date" />
+                android:clickable="true"
+                android:inputType="none"
+                android:focusable="false" />
 
             <EditText
                 android:id="@+id/editText_endTime"
@@ -103,7 +124,9 @@
                 android:layout_margin="8dp"
                 android:ems="10"
                 android:hint="Time"
-                android:inputType="time" />
+                android:clickable="true"
+                android:inputType="none"
+                android:focusable="false" />
 
             <TextView
                 android:id="@+id/textView10"
@@ -114,8 +137,18 @@
                 tools:layout_editor_absoluteX="41dp"
                 tools:layout_editor_absoluteY="424dp" />
 
+            <TextView
+                android:id="@+id/textView_meetup_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="Location Name"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
             <Button
-                android:id="@+id/button_location"
+                android:id="@+id/button_location_meetup"
                 style="@style/Widget.MaterialComponents.Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -127,7 +160,7 @@
                 tools:layout_editor_absoluteY="458dp" />
 
             <Button
-                android:id="@+id/button_submit"
+                android:id="@+id/button_submit_meetup"
                 style="@style/Widget.MaterialComponents.Button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -15,7 +15,11 @@ import cs407.socialkarmaapp.R
 import cs407.socialkarmaapp.Models.*
 import org.w3c.dom.Text
 
-class MeetupAdapter(private var meetups: MutableList<Meetup>, private val context: MeetupActivity): RecyclerView.Adapter<MeetupViewHolder>() {
+interface MeetupDelegate {
+    fun rsvpButtonClicked(meetupId: String)
+}
+
+class MeetupAdapter(private var meetups: MutableList<Meetup>, private val context: MeetupActivity, private val delegate: MeetupDelegate): RecyclerView.Adapter<MeetupViewHolder>() {
     fun setMeetups(newMeetups: MutableList<Meetup>) {
         this.meetups = newMeetups
         this.notifyDataSetChanged()
@@ -38,25 +42,39 @@ class MeetupAdapter(private var meetups: MutableList<Meetup>, private val contex
     }
 
     override fun onBindViewHolder(p0: MeetupViewHolder, p1: Int) {
-        p0.setupView(meetups, p1)
+        p0.setupView(meetups, p1, delegate)
         p0.didSelectRow(meetups, p1, context)
     }
 }
 
 class MeetupViewHolder(val view: View): RecyclerView.ViewHolder(view) {
-    fun setupView(meetups: List<Meetup>, index: Int) {
+    fun setupView(meetups: List<Meetup>, index: Int, delegate: MeetupDelegate) {
         val meetup = meetups.get(index)
         val titleTextView = view.findViewById<TextView>(R.id.textView_title)
         val organizerTextView = view.findViewById<TextView>(R.id.textView_organizer)
         val descriptionTextView = view.findViewById<TextView>(R.id.textView_description)
         val rsvpButton = view.findViewById<Button>(R.id.button_rsvp)
+        val locationTextView = view.findViewById<TextView>(R.id.textView_meetup_detail_location)
+        val timesTextView = view.findViewById<TextView>(R.id.textView_meetup_detail_time)
 
         titleTextView.text = meetup.title
-        organizerTextView.text = meetup.organizer
+        organizerTextView.text = meetup.organizerName
         meetup.shortDescription?.let {
             descriptionTextView.text = meetup.shortDescription
         } ?: run {
             descriptionTextView.visibility = View.GONE
+        }
+
+        if (meetup.attending != null && meetup.attending) {
+            rsvpButton.text = "Attending"
+            rsvpButton.isEnabled = false
+        }
+
+        locationTextView.visibility = View.GONE
+        timesTextView.visibility = View.GONE
+
+        rsvpButton.setOnClickListener {
+            delegate.rsvpButtonClicked(meetup.meetupId)
         }
     }
 

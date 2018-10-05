@@ -231,20 +231,20 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_meetup);
         //initializing objects
-        meetupList = new ArrayList<>();
-        listView = (ListView) findViewById(R.id.meetup_list);
-
-        //adding some values to our list
-        meetupList.add(new meetup_item("Name","Title","context"));
-        meetupList.add(new meetup_item("Name","Title","context"));
-        meetupList.add(new meetup_item("Name","Title","context"));
-        meetupList.add(new meetup_item("Name","Title","context"));
-
-        //creating the adapter
-        MyMeetupAdapter adapter = new MyMeetupAdapter(this, R.layout.meetup_item, meetupList);
-
-        //attaching adapter to the listview
-        listView.setAdapter(adapter);
+//        meetupList = new ArrayList<>();
+//        listView = (ListView) findViewById(R.id.meetup_list);
+//
+//        //adding some values to our list
+//        meetupList.add(new meetup_item("Name","Title","context"));
+//        meetupList.add(new meetup_item("Name","Title","context"));
+//        meetupList.add(new meetup_item("Name","Title","context"));
+//        meetupList.add(new meetup_item("Name","Title","context"));
+//
+//        //creating the adapter
+//        MyMeetupAdapter adapter = new MyMeetupAdapter(this, R.layout.meetup_item, meetupList);
+//
+//        //attaching adapter to the listview
+//        listView.setAdapter(adapter);
     }
 
     public void openMap() {
