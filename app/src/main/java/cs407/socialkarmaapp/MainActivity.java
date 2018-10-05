@@ -30,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView mTextMessage;
 
     List<list_item> list;
+    List<meetup_item> meetupList;
+
     //the listview
     ListView listView;
 
@@ -89,7 +91,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // Code here executes on main thread after user presses button
                 //openMain();
-                openProfile();
+                //openProfile();
+                openMeetup();
             }
         });
 //        mTextMessage = (TextView) findViewById(R.id.message);
@@ -165,5 +168,25 @@ public class MainActivity extends AppCompatActivity {
         //attaching adapter to the listview
         listView.setAdapter(adapter);
 
+    }
+
+    public void openMeetup() {
+
+        setContentView(R.layout.activity_meetup);
+        //initializing objects
+        meetupList = new ArrayList<>();
+        listView = (ListView) findViewById(R.id.meetup_list);
+
+        //adding some values to our list
+        meetupList.add(new meetup_item("Name","Title","context"));
+        meetupList.add(new meetup_item("Name","Title","context"));
+        meetupList.add(new meetup_item("Name","Title","context"));
+        meetupList.add(new meetup_item("Name","Title","context"));
+
+        //creating the adapter
+        MyMeetupAdapter adapter = new MyMeetupAdapter(this, R.layout.meetup_item, meetupList);
+
+        //attaching adapter to the listview
+        listView.setAdapter(adapter);
     }
 }
