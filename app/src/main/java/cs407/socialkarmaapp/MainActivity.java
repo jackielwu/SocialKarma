@@ -22,6 +22,9 @@ import com.google.android.gms.maps.SupportMapFragment;
 import java.util.ArrayList;
 import java.util.List;
 
+import co.ceryle.radiorealbutton.RadioRealButton;
+import co.ceryle.radiorealbutton.RadioRealButtonGroup;
+
 public class MainActivity extends AppCompatActivity {
 
     private TextView mTextMessage;
@@ -85,7 +88,8 @@ public class MainActivity extends AppCompatActivity {
         login_btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Code here executes on main thread after user presses button
-                openMain();
+                //openMain();
+                openProfile();
             }
         });
 //        mTextMessage = (TextView) findViewById(R.id.message);
@@ -103,6 +107,48 @@ public class MainActivity extends AppCompatActivity {
         //initializing objects
         list = new ArrayList<>();
         listView = (ListView) findViewById(R.id.list_item);
+
+        //adding some values to our list
+        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+
+        //creating the adapter
+        MyListAdapter adapter = new MyListAdapter(this, R.layout.list_item, list);
+
+        //attaching adapter to the listview
+        listView.setAdapter(adapter);
+
+    }
+
+    public void openProfile() {
+        setContentView(R.layout.activity_profile);
+
+
+        final RadioRealButton button1 = (RadioRealButton) findViewById(R.id.btn_profile_posts);
+        final RadioRealButton button2 = (RadioRealButton) findViewById(R.id.btn_profile_comments);
+
+        RadioRealButtonGroup group = (RadioRealButtonGroup) findViewById(R.id.button_group);
+
+        // onClickButton listener detects any click performed on buttons by touch
+        group.setOnClickedButtonListener(new RadioRealButtonGroup.OnClickedButtonListener() {
+            @Override
+            public void onClickedButton(RadioRealButton button, int position) {
+                Toast.makeText(MainActivity.this, "Clicked! Position: " + position, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+
+
+
+        //list
+        list = new ArrayList<>();
+        listView = (ListView) findViewById(R.id.profile_list);
 
         //adding some values to our list
         list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
