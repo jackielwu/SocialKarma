@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.ListView;
 import android.view.View;
 import android.widget.EditText;
@@ -55,9 +56,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
         setContentView(R.layout.activity_login);
+        Button login_btn = (Button)findViewById(R.id.button2);
+
         e1 = (EditText)findViewById(R.id.editText2);
         e2 = (EditText)findViewById(R.id.editText);
         auth = FirebaseAuth.getInstance();
@@ -81,7 +82,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
+        login_btn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Code here executes on main thread after user presses button
+                openMain();
+            }
+        });
 //        mTextMessage = (TextView) findViewById(R.id.message);
 //        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
 //        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
