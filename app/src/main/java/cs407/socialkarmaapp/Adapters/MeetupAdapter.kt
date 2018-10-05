@@ -68,6 +68,9 @@ class MeetupViewHolder(val view: View): RecyclerView.ViewHolder(view) {
         if (meetup.attending != null && meetup.attending) {
             rsvpButton.text = "Attending"
             rsvpButton.isEnabled = false
+        } else {
+            rsvpButton.text = "RSVP"
+            rsvpButton.isEnabled = true
         }
 
         locationTextView.visibility = View.GONE
