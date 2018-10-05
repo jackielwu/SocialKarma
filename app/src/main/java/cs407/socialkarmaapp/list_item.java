@@ -28,7 +28,7 @@ public class list_item {
     }
 
     public String getComment_num_String() {
-        return "comment" + comment_num;
+        return "comment " + comment_num;
     }
     public String getName() {
         return name;

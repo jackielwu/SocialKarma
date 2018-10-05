@@ -39,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
 
     //the listview
     ListView listView;
-    ListView listView1;
 
 
     private TextView forgotPasswordLink;
@@ -239,20 +238,29 @@ public class MainActivity extends AppCompatActivity {
         commentList = new ArrayList<>();
         listView = (ListView) findViewById(R.id.posted_item);
         //listView1 = (ListView) findViewById(R.id.comment_list);
-        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
         commentList.add(new list_item(0, "Comment", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
         commentList.add(new list_item(0, "Comment", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
         commentList.add(new list_item(0, "Comment", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
         commentList.add(new list_item(0, "Comment", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
         commentList.add(new list_item(0, "Comment", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
         commentList.add(new list_item(0, "Comment", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+        list.add(new list_item(0,commentList.size(), "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
 
-        MyListAdapter adapter = new MyListAdapter(this, R.layout.list_item, list);
 
-        MyListAdapter adapter1 = new MyListAdapter(this, R.layout.comment_item, commentList);
+        MyListAdapter adapter = new MyListAdapter(this, R.layout.comment_item, commentList);
 
         listView.setAdapter(adapter);
-        listView.setAdapter(adapter1);
+
+        TextView textViewName = (TextView) findViewById(R.id.name);
+        TextView textViewContext = (TextView) findViewById(R.id.context);
+        TextView textViewVote = (TextView) findViewById(R.id.upvote_num);
+        TextView textViewComment = (TextView) findViewById(R.id.commentButton);
+
+        textViewName.setText(list.get(0).getName());
+        textViewContext.setText(list.get(0).getContext());
+        textViewVote.setText(list.get(0).getVote_num_string());
+        textViewComment.setText(list.get(0).getComment_num_String());
+
 
     }
 }
