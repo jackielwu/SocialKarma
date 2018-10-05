@@ -56,7 +56,7 @@ public class SignUpActivity extends AppCompatActivity {
                         startActivity(intent);
                     }
                     else{
-                        Toast.makeText(getApplicationContext(), "User registered failed", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "This email has already sign up for an account", Toast.LENGTH_LONG).show();
                     }
                 }
             });
