@@ -20,10 +20,10 @@ import java.util.List;
  */
 
 //we need to extend the ArrayAdapter class as we are building an adapter
-public class MyListAdapter extends ArrayAdapter<list_item> {
+public class MyMessageAdapter extends ArrayAdapter<message_item> {
 
     //the list values in the List of type hero
-    List<list_item> item_list;
+    List<message_item> message_items;
 
     //activity context
     Context context;
@@ -32,11 +32,11 @@ public class MyListAdapter extends ArrayAdapter<list_item> {
     int resource;
 
     //constructor initializing the values
-    public MyListAdapter(Context context, int resource, List<list_item> item_list) {
-        super(context, resource, item_list);
+    public MyMessageAdapter(Context context, int resource, List<message_item> message_items) {
+        super(context, resource, message_items);
         this.context = context;
         this.resource = resource;
-        this.item_list = item_list;
+        this.message_items = message_items;
     }
 
     //this will return the ListView Item as a View
@@ -52,23 +52,18 @@ public class MyListAdapter extends ArrayAdapter<list_item> {
         View view = layoutInflater.inflate(resource, null, false);
 
         //getting the view elements of the list from the view
-        TextView textViewName = view.findViewById(R.id.name);
-        TextView textViewContext = view.findViewById(R.id.context);
-        TextView textViewVote = view.findViewById(R.id.upvote_num);
-        TextView textViewComment = view.findViewById(R.id.commentButton);
-
+        TextView textViewName = view.findViewById(R.id.message_sender);
+        TextView textViewContext = view.findViewById(R.id.message_context);
+        TextView textViewTime = view.findViewById(R.id.message_time);
         //getting the hero of the specified position
-        list_item item = item_list.get(position);
+        message_item item = message_items.get(position);
 
         //adding values to the list item
         textViewName.setText(item.getName());
         textViewContext.setText(item.getContext());
-        textViewVote.setText(item.getVote_num_string());
-        try {
-            textViewComment.setText(item.getComment_num_String());
-        }catch (NullPointerException e) {
-            return view;
-        }
+        textViewTime.setText(item.getTime());
+
+
         //finally returning the view
         return view;
     }

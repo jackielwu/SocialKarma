@@ -1,13 +1,19 @@
 package cs407.socialkarmaapp;
 
 import android.content.Intent;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.view.View;
@@ -16,6 +22,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -38,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     List<list_item> list;
     List<meetup_item> meetupList;
     List<list_item> commentList;
-
+    List<message_item> messageList;
     //the listview
     ListView listView;
 
@@ -46,6 +54,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView forgotPasswordLink;
     EditText e1, e2;
     FirebaseAuth auth;
+    private GoogleMap mMap;
+    LatLng myPosition;
+
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -55,18 +66,30 @@ public class MainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    mTextMessage.setText(R.string.title_home);
+//                    mTextMessage.setText(R.string.title_home);
+                    openMain();
                     return true;
-                case R.id.navigation_dashboard:
-                    mTextMessage.setText(R.string.title_dashboard);
+                case R.id.navigation_profile:
+//                    mTextMessage.setText(R.string.title_profile);
+                    openProfile();
                     return true;
-                case R.id.navigation_notifications:
-                    mTextMessage.setText(R.string.title_notifications);
+                case R.id.navigation_map:
+//                    mTextMessage.setText(R.string.title_map);
+                    openMap();
+                    return true;
+                case R.id.navigation_meetup:
+//                    mTextMessage.setText(R.string.title_meetup);
+                    openMeetup();
+                    return true;
+                case R.id.navigation_message:
+//                    mTextMessage.setText(R.string.title_message);
+                    openChatList();
                     return true;
             }
             return false;
         }
     };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,17 +149,16 @@ public class MainActivity extends AppCompatActivity {
                 });
                 */
                 // Code here executes on main thread after user presses button
-                //openMain();
+                openMain();
                 //openProfile();
                 //openMeetup();
                 //openMap();
                 //openPostIndividual();
-                openChat();
+                //openChat();
+                //openChatList();
             }
         });
-//        mTextMessage = (TextView) findViewById(R.id.message);
-//        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-//        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
     }
 
     public void signUpButton(View view){
@@ -146,6 +168,13 @@ public class MainActivity extends AppCompatActivity {
 
     public void openMain() {
         setContentView(R.layout.activity_main);
+        mTextMessage = (TextView) findViewById(R.id.message);
+        BottomNavigationView navigation = (BottomNavigationView)findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+
+
+
         //initializing objects
         list = new ArrayList<>();
         listView = (ListView) findViewById(R.id.list_item);
@@ -165,11 +194,24 @@ public class MainActivity extends AppCompatActivity {
         //attaching adapter to the listview
         listView.setAdapter(adapter);
 
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Object o = listView.getItemAtPosition(position);
+                Toast.makeText(MainActivity.this, "Clicked! Position: " + position, Toast.LENGTH_SHORT).show();
+                openPostIndividual();
+            }
+        });
+
     }
 
     public void openProfile() {
         setContentView(R.layout.activity_profile);
 
+        mTextMessage = (TextView) findViewById(R.id.message);
+        BottomNavigationView navigation = (BottomNavigationView)findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         final RadioRealButton button1 = (RadioRealButton) findViewById(R.id.btn_profile_posts);
         final RadioRealButton button2 = (RadioRealButton) findViewById(R.id.btn_profile_comments);
@@ -212,6 +254,9 @@ public class MainActivity extends AppCompatActivity {
     public void openMeetup() {
 
         setContentView(R.layout.activity_meetup);
+        mTextMessage = (TextView) findViewById(R.id.message);
+        BottomNavigationView navigation = (BottomNavigationView)findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         //initializing objects
         meetupList = new ArrayList<>();
         listView = (ListView) findViewById(R.id.meetup_list);
@@ -231,11 +276,23 @@ public class MainActivity extends AppCompatActivity {
 
     public void openMap() {
         setContentView(R.layout.activity_map);
+        mTextMessage = (TextView) findViewById(R.id.message);
+        BottomNavigationView navigation = (BottomNavigationView)findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
 
     }
 
     public void openPostIndividual() {
         setContentView(R.layout.activity_individual_post);
+
+        Button back = (Button)findViewById(R.id.post_back);
+
+        back.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                openMain();
+            }
+        });
         //list
         list = new ArrayList<>();
         commentList = new ArrayList<>();
@@ -266,9 +323,39 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+    public void openChatList() {
+        setContentView(R.layout.activity_chat);
+        mTextMessage = (TextView) findViewById(R.id.message);
+        BottomNavigationView navigation = (BottomNavigationView)findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        messageList = new ArrayList<>();
+
+        listView = (ListView) findViewById(R.id.message_list);
+        messageList.add(new message_item("12:30","Ryan Java", "A message with a sender name"));
+
+        MyMessageAdapter adapter = new MyMessageAdapter(this, R.layout.chat_item, messageList);
+
+        listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Object o = listView.getItemAtPosition(position);
+                openChat();
+            }
+        });
+    }
+
+
     public void openChat(){
         setContentView(R.layout.activity_individual_chat);
+        Button back = (Button)findViewById(R.id.chat_back);
 
+        back.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                openChatList();
+            }
+        });
         ChatView chatView = (ChatView) findViewById(R.id.chat_view);
         chatView.addMessage(new ChatMessage("Message received", System.currentTimeMillis(), ChatMessage.Type.RECEIVED));
         chatView.addMessage(new ChatMessage("A message with a sender name",
@@ -277,6 +364,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean sendMessage(ChatMessage chatMessage) {
                 //need to implement storing to database
+
                 return true;
             }
         });
