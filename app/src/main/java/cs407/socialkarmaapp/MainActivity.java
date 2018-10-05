@@ -28,6 +28,8 @@ import java.util.List;
 
 import co.ceryle.radiorealbutton.RadioRealButton;
 import co.ceryle.radiorealbutton.RadioRealButtonGroup;
+import co.intentservice.chatui.ChatView;
+import co.intentservice.chatui.models.ChatMessage;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -128,7 +130,8 @@ public class MainActivity extends AppCompatActivity {
                 //openProfile();
                 //openMeetup();
                 //openMap();
-                openPostIndividual();
+                //openPostIndividual();
+                openChat();
             }
         });
 //        mTextMessage = (TextView) findViewById(R.id.message);
@@ -262,5 +265,32 @@ public class MainActivity extends AppCompatActivity {
         textViewComment.setText(list.get(0).getComment_num_String());
 
 
+    }
+    public void openChat(){
+        setContentView(R.layout.activity_individual_chat);
+
+        ChatView chatView = (ChatView) findViewById(R.id.chat_view);
+        chatView.addMessage(new ChatMessage("Message received", System.currentTimeMillis(), ChatMessage.Type.RECEIVED));
+        chatView.addMessage(new ChatMessage("A message with a sender name",
+                System.currentTimeMillis(), ChatMessage.Type.RECEIVED, "Ryan Java"));
+        chatView.setOnSentMessageListener(new ChatView.OnSentMessageListener() {
+            @Override
+            public boolean sendMessage(ChatMessage chatMessage) {
+                //need to implement storing to database
+                return true;
+            }
+        });
+
+        chatView.setTypingListener(new ChatView.TypingListener() {
+            @Override
+            public void userStartedTyping() {
+
+            }
+
+            @Override
+            public void userStoppedTyping() {
+
+            }
+        });
     }
 }
