@@ -20,4 +20,11 @@ object APIClient {
             client.newCall(request).enqueue(callback)
         }
     }
+
+    fun getMeetupDetail(meetupId: String, callback: Callback) {
+        var url = baseURL + "/meetup/" + meetupId
+        val request = Request.Builder().url(url).build()
+        val client = OkHttpClient()
+        client.newCall(request).enqueue(callback)
+    }
 }

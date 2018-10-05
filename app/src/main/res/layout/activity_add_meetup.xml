@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/LightGrey"
+    tools:context=".AddMeetupActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_add_meetup"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/GhostWhite"
+        android:minHeight="?attr/actionBarSize"
+        app:navigationIcon="?attr/homeAsUpIndicator"
+        app:title="Create New Meetup"
+        app:titleTextColor="@android:color/darker_gray">
+    </android.support.v7.widget.Toolbar>
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_add_meetup">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="Meetup Title"
+                tools:layout_editor_absoluteX="34dp"
+                tools:layout_editor_absoluteY="168dp" />
+
+            <EditText
+                android:id="@+id/editText_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:ems="10"
+                android:hint="Meetup Title"
+                android:inputType="textPersonName"
+                tools:layout_editor_absoluteX="34dp"
+                tools:layout_editor_absoluteY="196dp" />
+
+            <TextView
+                android:id="@+id/textView8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="Start Time"
+                tools:layout_editor_absoluteX="41dp"
+                tools:layout_editor_absoluteY="253dp" />
+
+            <EditText
+                android:id="@+id/editText_startTime_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:ems="10"
+                android:hint="Date"
+                android:inputType="date" />
+
+            <EditText
+                android:id="@+id/editText_startTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:ems="10"
+                android:hint="Time"
+                android:inputType="time" />
+
+            <TextView
+                android:id="@+id/textView9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="End Time"
+                tools:layout_editor_absoluteX="34dp"
+                tools:layout_editor_absoluteY="329dp" />
+
+            <EditText
+                android:id="@+id/editText_endTime_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:ems="10"
+                android:hint="Date"
+                android:inputType="date" />
+
+            <EditText
+                android:id="@+id/editText_endTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:ems="10"
+                android:hint="Time"
+                android:inputType="time" />
+
+            <TextView
+                android:id="@+id/textView10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="Location"
+                tools:layout_editor_absoluteX="41dp"
+                tools:layout_editor_absoluteY="424dp" />
+
+            <Button
+                android:id="@+id/button_location"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:background="@android:color/holo_blue_dark"
+                android:text="Search for a Location"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                tools:layout_editor_absoluteX="36dp"
+                tools:layout_editor_absoluteY="458dp" />
+
+            <Button
+                android:id="@+id/button_submit"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="32dp"
+                android:background="@android:color/holo_blue_dark"
+                android:text="SUBMIT"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+
+</android.support.constraint.ConstraintLayout>

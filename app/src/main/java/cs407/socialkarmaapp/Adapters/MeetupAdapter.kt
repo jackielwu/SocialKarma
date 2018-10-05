@@ -1,5 +1,6 @@
 package cs407.socialkarmaapp.Adapters
 
+import android.content.Intent
 import android.opengl.Visibility
 import android.support.constraint.R.id.gone
 import android.support.v7.widget.RecyclerView
@@ -8,11 +9,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import cs407.socialkarmaapp.MeetupActivity
+import cs407.socialkarmaapp.MeetupDetailActivity
 import cs407.socialkarmaapp.R
 import cs407.socialkarmaapp.Models.*
 import org.w3c.dom.Text
 
-class MeetupAdapter(private var meetups: MutableList<Meetup>): RecyclerView.Adapter<MeetupViewHolder>() {
+class MeetupAdapter(private var meetups: MutableList<Meetup>, private val context: MeetupActivity): RecyclerView.Adapter<MeetupViewHolder>() {
     fun setMeetups(newMeetups: MutableList<Meetup>) {
         this.meetups = newMeetups
         this.notifyDataSetChanged()
@@ -36,6 +39,7 @@ class MeetupAdapter(private var meetups: MutableList<Meetup>): RecyclerView.Adap
 
     override fun onBindViewHolder(p0: MeetupViewHolder, p1: Int) {
         p0.setupView(meetups, p1)
+        p0.didSelectRow(meetups, p1, context)
     }
 }
 
@@ -53,6 +57,16 @@ class MeetupViewHolder(val view: View): RecyclerView.ViewHolder(view) {
             descriptionTextView.text = meetup.shortDescription
         } ?: run {
             descriptionTextView.visibility = View.GONE
+        }
+    }
+
+    fun didSelectRow(meetups: List<Meetup>, index: Int, context: MeetupActivity) {
+        this.view.setOnClickListener {
+            val intent = Intent(context, MeetupDetailActivity::class.java)
+            val meetup = meetups.get(index)
+            intent.putExtra(MeetupActivity.EXTRA_MEETUP, meetup.meetupId)
+            intent.putExtra(MeetupActivity.EXTRA_MEETUP_TITLE, meetup.title)
+            context.startActivity(intent)
         }
     }
 }
