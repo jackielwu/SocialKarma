@@ -172,7 +172,73 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, SignUpActivity.class);
         startActivity(intent);
     }
+    public void openLogin() {
+        setContentView(R.layout.activity_login);
 
+        Button login_btn = (Button)findViewById(R.id.button2);
+
+        e1 = (EditText)findViewById(R.id.editText2);
+        e2 = (EditText)findViewById(R.id.editText);
+        auth = FirebaseAuth.getInstance();
+        forgotPasswordLink = (TextView)findViewById(R.id.textView5);
+        forgotPasswordLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String email = e1.getText().toString();
+                if(email.equals("")){
+                    Toast.makeText(getApplicationContext(), "Email is blank, enter a valid email above", Toast.LENGTH_LONG).show();
+                }
+                else {
+                    auth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()){
+                                Toast.makeText(getApplicationContext(), "Please check your email for password reset", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+                }
+            }
+        });
+        login_btn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                String email = e1.getText().toString();
+                String password = e2.getText().toString();
+                if(TextUtils.isEmpty(email)){
+                    Toast.makeText(getApplicationContext(), "Please enter valid email", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                if(TextUtils.isEmpty(password)){
+                    Toast.makeText(getApplicationContext(), "Please enter valid password", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful()){
+                            openMain();
+
+                        }
+                        else{
+                            Toast.makeText(getApplicationContext(), "Email/Password is invalid", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                    }
+                });
+
+                // Code here executes on main thread after user presses button
+                //openMain();
+                //openProfile();
+                //openMeetup();
+                //openMap();
+                //openPostIndividual();
+                //openChat();
+                //openChatList();
+
+            }
+        });
+    }
     public void openMain() {
         setContentView(R.layout.activity_main);
         mTextMessage = (TextView) findViewById(R.id.message);
@@ -261,8 +327,9 @@ public class MainActivity extends AppCompatActivity {
                    @Override
                    public void onComplete(@NonNull Task<Void> task) {
                        if(task.isSuccessful()){
-                           setContentView(R.layout.activity_login);
+
                            Toast.makeText(getApplicationContext(), "Account deleted", Toast.LENGTH_LONG).show();
+                           openLogin();
                        }
                    }
                });
