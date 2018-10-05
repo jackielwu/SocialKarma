@@ -1,5 +1,6 @@
 package cs407.socialkarmaapp;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -30,6 +32,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -126,20 +129,23 @@ public class MainActivity extends AppCompatActivity {
         });
         login_btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                /*
+                
                 String email = e1.getText().toString();
                 String password = e2.getText().toString();
                 if(TextUtils.isEmpty(email)){
                     Toast.makeText(getApplicationContext(), "Please enter valid email", Toast.LENGTH_LONG).show();
+                    return;
                 }
                 if(TextUtils.isEmpty(password)){
                     Toast.makeText(getApplicationContext(), "Please enter valid password", Toast.LENGTH_LONG).show();
+                    return;
                 }
                 auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
                             openMain();
+
                         }
                         else{
                             Toast.makeText(getApplicationContext(), "Email/Password is invalid", Toast.LENGTH_LONG).show();
@@ -147,15 +153,16 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
-                */
+
                 // Code here executes on main thread after user presses button
-                openMain();
+                //openMain();
                 //openProfile();
                 //openMeetup();
                 //openMap();
                 //openPostIndividual();
                 //openChat();
                 //openChatList();
+
             }
         });
 
@@ -227,9 +234,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
-
-
         //list
         list = new ArrayList<>();
         listView = (ListView) findViewById(R.id.profile_list);
@@ -249,6 +253,22 @@ public class MainActivity extends AppCompatActivity {
         //attaching adapter to the listview
         listView.setAdapter(adapter);
 
+        Button delete_btn = (Button)findViewById(R.id.btn_DeleteAccount);
+        delete_btn.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+               FirebaseUser tempUser = FirebaseAuth.getInstance().getCurrentUser();
+               tempUser.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                   @Override
+                   public void onComplete(@NonNull Task<Void> task) {
+                       if(task.isSuccessful()){
+                           setContentView(R.layout.activity_login);
+                           Toast.makeText(getApplicationContext(), "Account deleted", Toast.LENGTH_LONG).show();
+                       }
+                   }
+               });
+            }
+        });
+
     }
 
     public void openMeetup() {
@@ -258,20 +278,20 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView navigation = (BottomNavigationView)findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         //initializing objects
-        meetupList = new ArrayList<>();
-        listView = (ListView) findViewById(R.id.meetup_list);
-
-        //adding some values to our list
-        meetupList.add(new meetup_item("Name","Title","context"));
-        meetupList.add(new meetup_item("Name","Title","context"));
-        meetupList.add(new meetup_item("Name","Title","context"));
-        meetupList.add(new meetup_item("Name","Title","context"));
-
-        //creating the adapter
-        MyMeetupAdapter adapter = new MyMeetupAdapter(this, R.layout.meetup_item, meetupList);
-
-        //attaching adapter to the listview
-        listView.setAdapter(adapter);
+//        meetupList = new ArrayList<>();
+//        listView = (ListView) findViewById(R.id.meetup_list);
+//
+//        //adding some values to our list
+//        meetupList.add(new meetup_item("Name","Title","context"));
+//        meetupList.add(new meetup_item("Name","Title","context"));
+//        meetupList.add(new meetup_item("Name","Title","context"));
+//        meetupList.add(new meetup_item("Name","Title","context"));
+//
+//        //creating the adapter
+//        MyMeetupAdapter adapter = new MyMeetupAdapter(this, R.layout.meetup_item, meetupList);
+//
+//        //attaching adapter to the listview
+//        listView.setAdapter(adapter);
     }
 
     public void openMap() {
