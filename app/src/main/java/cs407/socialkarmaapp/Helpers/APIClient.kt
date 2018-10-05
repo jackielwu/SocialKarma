@@ -4,7 +4,7 @@ import okhttp3.*
 import java.io.IOException
 
 object APIClient {
-    private const val baseURL = "localhost:8080"
+    private const val baseURL = "http://10.0.2.2:8080"
 
     fun getMeetups(lastStartTime: Int?, callback: Callback) {
         var url: String
@@ -14,7 +14,7 @@ object APIClient {
             val client = OkHttpClient()
             client.newCall(request).enqueue(callback)
         } ?: run {
-            url = baseURL + "/meeutps"
+            url = baseURL + "/meetups"
             val request = Request.Builder().url(url).build()
             val client = OkHttpClient()
             client.newCall(request).enqueue(callback)
