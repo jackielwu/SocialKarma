@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ListView;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 import com.google.android.gms.maps.SupportMapFragment;
@@ -89,6 +91,28 @@ public class MainActivity extends AppCompatActivity {
         });
         login_btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                /*
+                String email = e1.getText().toString();
+                String password = e2.getText().toString();
+                if(TextUtils.isEmpty(email)){
+                    Toast.makeText(getApplicationContext(), "Please enter valid email", Toast.LENGTH_LONG).show();
+                }
+                if(TextUtils.isEmpty(password)){
+                    Toast.makeText(getApplicationContext(), "Please enter valid password", Toast.LENGTH_LONG).show();
+                }
+                auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful()){
+                            openMain();
+                        }
+                        else{
+                            Toast.makeText(getApplicationContext(), "Email/Password is invalid", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                    }
+                });
+                */
                 // Code here executes on main thread after user presses button
                 //openMain();
                 //openProfile();
