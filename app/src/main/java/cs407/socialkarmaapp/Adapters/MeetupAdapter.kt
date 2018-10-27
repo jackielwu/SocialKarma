@@ -1,14 +1,17 @@
 package cs407.socialkarmaapp.Adapters
 
+import android.content.Context
 import android.content.Intent
 import android.opengl.Visibility
 import android.support.constraint.R.id.gone
+import android.support.v4.app.FragmentActivity
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import cs407.socialkarmaapp.BaseActivity
 import cs407.socialkarmaapp.MeetupActivity
 import cs407.socialkarmaapp.MeetupDetailActivity
 import cs407.socialkarmaapp.R
@@ -19,7 +22,7 @@ interface MeetupDelegate {
     fun rsvpButtonClicked(meetupId: String)
 }
 
-class MeetupAdapter(private var meetups: MutableList<Meetup>, private val context: MeetupActivity, private val delegate: MeetupDelegate): RecyclerView.Adapter<MeetupViewHolder>() {
+class MeetupAdapter(private var meetups: MutableList<Meetup>, private val context: Context, private val delegate: MeetupDelegate): RecyclerView.Adapter<MeetupViewHolder>() {
     fun setMeetups(newMeetups: MutableList<Meetup>) {
         this.meetups = newMeetups
         this.notifyDataSetChanged()
@@ -81,7 +84,7 @@ class MeetupViewHolder(val view: View): RecyclerView.ViewHolder(view) {
         }
     }
 
-    fun didSelectRow(meetups: List<Meetup>, index: Int, context: MeetupActivity) {
+    fun didSelectRow(meetups: List<Meetup>, index: Int, context: Context) {
         this.view.setOnClickListener {
             val intent = Intent(context, MeetupDetailActivity::class.java)
             val meetup = meetups.get(index)

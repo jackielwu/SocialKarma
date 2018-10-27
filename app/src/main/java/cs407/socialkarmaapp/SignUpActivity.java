@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -22,6 +23,7 @@ public class SignUpActivity extends AppCompatActivity {
     EditText e1, e2, e3;
     ProgressDialog progressDialog;
     FirebaseAuth auth;
+    Button backButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +32,13 @@ public class SignUpActivity extends AppCompatActivity {
         e1 = (EditText)findViewById(R.id.editText2);
         e2 = (EditText)findViewById(R.id.editText);
         e3 = (EditText)findViewById(R.id.editText3);
+        backButton = findViewById(R.id.signup_back);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         progressDialog = new ProgressDialog(this);
         auth = FirebaseAuth.getInstance();
     }

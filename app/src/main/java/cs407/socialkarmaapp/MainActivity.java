@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
-                            openMain();
+                            launchBaseActivity();
 
                         }
                         else{
@@ -217,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
-                            openMain();
+                            launchBaseActivity();
 
                         }
                         else{
@@ -239,43 +239,50 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void launchBaseActivity() {
+        Intent intent = new Intent(this, BaseActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
+
     public void openMain() {
-        setContentView(R.layout.activity_main);
-        mTextMessage = (TextView) findViewById(R.id.message);
-        BottomNavigationView navigation = (BottomNavigationView)findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
-
-
-
-        //initializing objects
-        list = new ArrayList<>();
-        listView = (ListView) findViewById(R.id.list_item);
-
-        //adding some values to our list
-        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
-        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
-        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
-        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
-        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
-        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
-        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
-
-        //creating the adapter
-        MyListAdapter adapter = new MyListAdapter(this, R.layout.list_item, list);
-
-        //attaching adapter to the listview
-        listView.setAdapter(adapter);
-
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Object o = listView.getItemAtPosition(position);
-                Toast.makeText(MainActivity.this, "Clicked! Position: " + position, Toast.LENGTH_SHORT).show();
-                openPostIndividual();
-            }
-        });
+//        setContentView(R.layout.activity_main);
+//        mTextMessage = (TextView) findViewById(R.id.message);
+//        BottomNavigationView navigation = (BottomNavigationView)findViewById(R.id.navigation);
+//        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+//
+//
+//
+//
+//        //initializing objects
+//        list = new ArrayList<>();
+//        listView = (ListView) findViewById(R.id.list_item);
+//
+//        //adding some values to our list
+//        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+//        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+//        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+//        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+//        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+//        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+//        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+//
+//        //creating the adapter
+//        MyListAdapter adapter = new MyListAdapter(this, R.layout.list_item, list);
+//
+//        //attaching adapter to the listview
+//        listView.setAdapter(adapter);
+//
+//
+//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                Object o = listView.getItemAtPosition(position);
+//                Toast.makeText(MainActivity.this, "Clicked! Position: " + position, Toast.LENGTH_SHORT).show();
+//                openPostIndividual();
+//            }
+//        });
 
     }
 
@@ -340,8 +347,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void openMeetup() {
 
-        setContentView(R.layout.activity_meetup);
-        mTextMessage = (TextView) findViewById(R.id.message);
+        startActivity(new Intent(this, MeetupActivity.class));
+//        setContentView(R.layout.activity_meetup);
+//        mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView)findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         //initializing objects
