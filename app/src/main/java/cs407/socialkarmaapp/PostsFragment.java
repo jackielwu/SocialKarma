@@ -1,7 +1,15 @@
 package cs407.socialkarmaapp;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,56 +20,144 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import cs407.socialkarmaapp.Adapters.PostAdapterDelegate;
+import cs407.socialkarmaapp.Adapters.PostsAdapter;
+import cs407.socialkarmaapp.Helpers.APIClient;
+import cs407.socialkarmaapp.Models.Meetup;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
+
+import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
 public class PostsFragment extends Fragment {
+    public static final String EXTRA_POST = "cs407.socialkarmaapp.POST";
+    public static final String EXTRA_POST_TITLE = "cs407.socialkarmaapp.POST_TITLE";
 
-    private TextView mTextMessage;
+    List<Post> list;
+    RecyclerView recyclerView;
+    PostsAdapter adapter;
 
-    List<list_item> list;
-    ListView listView;
-
-    EditText e1, e2;
+    private FusedLocationProviderClient mFusedLocationClient;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_main, parent, false);
-        mTextMessage = (TextView) view.findViewById(R.id.message);
 
         //initializing objects
         list = new ArrayList<>();
-        listView = (ListView) view.findViewById(R.id.list_item);
-
-        //adding some values to our list
-        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
-        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
-        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
-        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
-        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
-        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
-        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+        recyclerView = (RecyclerView) view.findViewById(R.id.list_item);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         //creating the adapter
-        MyListAdapter adapter = new MyListAdapter(getActivity(), R.layout.list_item, list);
-
-        //attaching adapter to the listview
-        listView.setAdapter(adapter);
-
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        adapter = new PostsAdapter(list, getActivity(), new PostAdapterDelegate() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Object o = listView.getItemAtPosition(position);
-                Toast.makeText(getActivity(), "Clicked! Position: " + position, Toast.LENGTH_SHORT).show();
-//                openPostIndividual();
+            public void upVoteButtonClicked(@NotNull String postId) {
+
+            }
+
+            @Override
+            public void downVoteButtonClicked(@NotNull String postId) {
+
             }
         });
+
+        //attaching adapter to the listview
+        recyclerView.setAdapter(adapter);
+
+        mFusedLocationClient = getFusedLocationProviderClient(getActivity());
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getPosts();
+    }
+
+    private boolean checkPermissions() {
+        if (ContextCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            requestPermissions();
+            return false;
+        }
+    }
+
+    private void requestPermissions() {
+        ActivityCompat.requestPermissions(getActivity(),
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+    }
+
+
+    private void getPosts() {
+        checkPermissions();
+        mFusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                if (location != null) {
+                    APIClient.INSTANCE.getGeolocation(location, new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                            System.out.println("Could not get a geolocation.");
+                        }
+
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            String body = response.body().string();
+                            Gson gson = new GsonBuilder().create();
+
+                            Map<String, String> map = new HashMap<String, String>();
+                            map = (Map<String, String>)gson.fromJson(body, map.getClass());
+                            String geolocation = map.get("geo");
+
+                            if (geolocation != null) {
+                                APIClient.INSTANCE.getPosts(geolocation, null, new Callback() {
+                                    @Override
+                                    public void onFailure(Call call, IOException e) {
+                                        System.out.println("Could not get posts.");
+                                    }
+
+                                    @Override
+                                    public void onResponse(Call call, Response response) throws IOException {
+                                        String body = response.body().string();
+                                        Gson gson = new GsonBuilder().create();
+
+                                        Post[] postsArray = gson.fromJson(body, Post[].class);
+                                        final List<Post> posts= new ArrayList<Post>(Arrays.asList(postsArray));
+                                        getActivity().runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                adapter.setPosts(posts);
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+        });
     }
 
 //    public void openPostIndividual() {

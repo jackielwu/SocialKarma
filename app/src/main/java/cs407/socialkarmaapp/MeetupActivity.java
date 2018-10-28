@@ -62,7 +62,6 @@ public class MeetupActivity extends Fragment {
         });
         meetupRecyclerView.setAdapter(meetupAdapter);
 
-        getMeetups();
         return view;
     }
 

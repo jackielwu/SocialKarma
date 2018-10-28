@@ -1,5 +1,6 @@
 package cs407.socialkarmaapp.Helpers
 
+import android.location.Location
 import com.google.android.gms.location.places.Place
 import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.JsonObject
@@ -9,6 +10,20 @@ import java.io.IOException
 
 object APIClient {
     private const val baseURL = "http://10.0.2.2:8080"
+
+    fun getGeolocation(location: Location, callback: Callback) {
+        val url = baseURL + "/geo?lat=" + location.latitude + "&lng=" + location.longitude
+        val request = Request.Builder().url(url).build()
+        val client = OkHttpClient()
+        client.newCall(request).enqueue(callback)
+    }
+
+    fun getPosts(geoLocation: String, lastStartTime: Int?, callback: Callback) {
+        val url = baseURL + "/posts?geolocation=" + geoLocation
+        val request = Request.Builder().url(url).build()
+        val client = OkHttpClient()
+        client.newCall(request).enqueue(callback)
+    }
 
     fun getMeetups(lastStartTime: Int?, callback: Callback) {
         var url: String

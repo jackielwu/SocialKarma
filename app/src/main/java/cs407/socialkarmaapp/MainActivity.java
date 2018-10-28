@@ -46,10 +46,6 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView mTextMessage;
 
-    List<list_item> list;
-    List<meetup_item> meetupList;
-    List<list_item> commentList;
-    List<message_item> messageList;
     //the listview
     ListView listView;
 
@@ -287,61 +283,61 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void openProfile() {
-        setContentView(R.layout.activity_profile);
-
-        mTextMessage = (TextView) findViewById(R.id.message);
-        BottomNavigationView navigation = (BottomNavigationView)findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
-        final RadioRealButton button1 = (RadioRealButton) findViewById(R.id.btn_profile_posts);
-        final RadioRealButton button2 = (RadioRealButton) findViewById(R.id.btn_profile_comments);
-
-        RadioRealButtonGroup group = (RadioRealButtonGroup) findViewById(R.id.button_group);
-
-        // onClickButton listener detects any click performed on buttons by touch
-        group.setOnClickedButtonListener(new RadioRealButtonGroup.OnClickedButtonListener() {
-            @Override
-            public void onClickedButton(RadioRealButton button, int position) {
-                Toast.makeText(MainActivity.this, "Clicked! Position: " + position, Toast.LENGTH_SHORT).show();
-            }
-        });
-
-
-        //list
-        list = new ArrayList<>();
-        listView = (ListView) findViewById(R.id.profile_list);
-
-        //adding some values to our list
-        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
-        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
-        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
-        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
-        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
-        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
-        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
-
-        //creating the adapter
-        MyListAdapter adapter = new MyListAdapter(this, R.layout.list_item, list);
-
-        //attaching adapter to the listview
-        listView.setAdapter(adapter);
-
-        Button delete_btn = (Button)findViewById(R.id.btn_DeleteAccount);
-        delete_btn.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-               FirebaseUser tempUser = FirebaseAuth.getInstance().getCurrentUser();
-               tempUser.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                   @Override
-                   public void onComplete(@NonNull Task<Void> task) {
-                       if(task.isSuccessful()){
-
-                           Toast.makeText(getApplicationContext(), "Account deleted", Toast.LENGTH_LONG).show();
-                           openLogin();
-                       }
-                   }
-               });
-            }
-        });
+//        setContentView(R.layout.activity_profile);
+//
+//        mTextMessage = (TextView) findViewById(R.id.message);
+//        BottomNavigationView navigation = (BottomNavigationView)findViewById(R.id.navigation);
+//        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+//
+//        final RadioRealButton button1 = (RadioRealButton) findViewById(R.id.btn_profile_posts);
+//        final RadioRealButton button2 = (RadioRealButton) findViewById(R.id.btn_profile_comments);
+//
+//        RadioRealButtonGroup group = (RadioRealButtonGroup) findViewById(R.id.button_group);
+//
+//        // onClickButton listener detects any click performed on buttons by touch
+//        group.setOnClickedButtonListener(new RadioRealButtonGroup.OnClickedButtonListener() {
+//            @Override
+//            public void onClickedButton(RadioRealButton button, int position) {
+//                Toast.makeText(MainActivity.this, "Clicked! Position: " + position, Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//
+//
+//        //list
+//        list = new ArrayList<>();
+//        listView = (ListView) findViewById(R.id.profile_list);
+//
+//        //adding some values to our list
+//        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+//        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+//        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+//        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+//        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+//        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+//        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+//
+//        //creating the adapter
+//        MyListAdapter adapter = new MyListAdapter(this, R.layout.list_item, list);
+//
+//        //attaching adapter to the listview
+//        listView.setAdapter(adapter);
+//
+//        Button delete_btn = (Button)findViewById(R.id.btn_DeleteAccount);
+//        delete_btn.setOnClickListener(new View.OnClickListener(){
+//            public void onClick(View v){
+//               FirebaseUser tempUser = FirebaseAuth.getInstance().getCurrentUser();
+//               tempUser.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+//                   @Override
+//                   public void onComplete(@NonNull Task<Void> task) {
+//                       if(task.isSuccessful()){
+//
+//                           Toast.makeText(getApplicationContext(), "Account deleted", Toast.LENGTH_LONG).show();
+//                           openLogin();
+//                       }
+//                   }
+//               });
+//            }
+//        });
 
     }
 
@@ -379,66 +375,66 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void openPostIndividual() {
-        setContentView(R.layout.activity_individual_post);
-
-        Button back = (Button)findViewById(R.id.post_back);
-
-        back.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                openMain();
-            }
-        });
-        //list
-        list = new ArrayList<>();
-        commentList = new ArrayList<>();
-        listView = (ListView) findViewById(R.id.posted_item);
-        //listView1 = (ListView) findViewById(R.id.comment_list);
-        commentList.add(new list_item(0, "Comment", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
-        commentList.add(new list_item(0, "Comment", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
-        commentList.add(new list_item(0, "Comment", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
-        commentList.add(new list_item(0, "Comment", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
-        commentList.add(new list_item(0, "Comment", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
-        commentList.add(new list_item(0, "Comment", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
-        list.add(new list_item(0,commentList.size(), "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
-
-
-        MyListAdapter adapter = new MyListAdapter(this, R.layout.comment_item, commentList);
-
-        listView.setAdapter(adapter);
-
-        TextView textViewName = (TextView) findViewById(R.id.name);
-        TextView textViewContext = (TextView) findViewById(R.id.context);
-        TextView textViewVote = (TextView) findViewById(R.id.upvote_num);
-        TextView textViewComment = (TextView) findViewById(R.id.commentButton);
-
-        textViewName.setText(list.get(0).getName());
-        textViewContext.setText(list.get(0).getContext());
-        textViewVote.setText(list.get(0).getVote_num_string());
-        textViewComment.setText(list.get(0).getComment_num_String());
-
+//        setContentView(R.layout.activity_individual_post);
+//
+//        Button back = (Button)findViewById(R.id.post_back);
+//
+//        back.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//                openMain();
+//            }
+//        });
+//        //list
+//        list = new ArrayList<>();
+//        commentList = new ArrayList<>();
+//        listView = (ListView) findViewById(R.id.posted_item);
+//        //listView1 = (ListView) findViewById(R.id.comment_list);
+//        commentList.add(new list_item(0, "Comment", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+//        commentList.add(new list_item(0, "Comment", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+//        commentList.add(new list_item(0, "Comment", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+//        commentList.add(new list_item(0, "Comment", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+//        commentList.add(new list_item(0, "Comment", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+//        commentList.add(new list_item(0, "Comment", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+//        list.add(new list_item(0,commentList.size(), "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
+//
+//
+//        MyListAdapter adapter = new MyListAdapter(this, R.layout.comment_item, commentList);
+//
+//        listView.setAdapter(adapter);
+//
+//        TextView textViewName = (TextView) findViewById(R.id.name);
+//        TextView textViewContext = (TextView) findViewById(R.id.context);
+//        TextView textViewVote = (TextView) findViewById(R.id.upvote_num);
+//        TextView textViewComment = (TextView) findViewById(R.id.commentButton);
+//
+//        textViewName.setText(list.get(0).getName());
+//        textViewContext.setText(list.get(0).getContext());
+//        textViewVote.setText(list.get(0).getVote_num_string());
+//        textViewComment.setText(list.get(0).getComment_num_String());
+//
 
     }
     public void openChatList() {
-        setContentView(R.layout.activity_chat);
-        mTextMessage = (TextView) findViewById(R.id.message);
-        BottomNavigationView navigation = (BottomNavigationView)findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
-        messageList = new ArrayList<>();
-
-        listView = (ListView) findViewById(R.id.message_list);
-        messageList.add(new message_item("12:30","Ryan Java", "A message with a sender name"));
-
-        MyMessageAdapter adapter = new MyMessageAdapter(this, R.layout.chat_item, messageList);
-
-        listView.setAdapter(adapter);
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Object o = listView.getItemAtPosition(position);
-                openChat();
-            }
-        });
+//        setContentView(R.layout.activity_chat);
+//        mTextMessage = (TextView) findViewById(R.id.message);
+//        BottomNavigationView navigation = (BottomNavigationView)findViewById(R.id.navigation);
+//        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+//
+//        messageList = new ArrayList<>();
+//
+//        listView = (ListView) findViewById(R.id.message_list);
+//        messageList.add(new message_item("12:30","Ryan Java", "A message with a sender name"));
+//
+//        MyMessageAdapter adapter = new MyMessageAdapter(this, R.layout.chat_item, messageList);
+//
+//        listView.setAdapter(adapter);
+//
+//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                Object o = listView.getItemAtPosition(position);
+//                openChat();
+//            }
+//        });
     }
 
 

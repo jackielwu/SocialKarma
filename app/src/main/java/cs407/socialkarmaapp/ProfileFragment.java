@@ -30,7 +30,7 @@ import co.ceryle.radiorealbutton.RadioRealButtonGroup;
 public class ProfileFragment extends Fragment {
     private TextView mTextMessage;
 
-    List<list_item> list;
+    List<Post> list;
     ListView listView;
 
     @Override
@@ -57,20 +57,11 @@ public class ProfileFragment extends Fragment {
         list = new ArrayList<>();
         listView = (ListView) view.findViewById(R.id.profile_list);
 
-        //adding some values to our list
-        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
-        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
-        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
-        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
-        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
-        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
-        list.add(new list_item(0,0, "Lorem Ipsum", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "));
-
         //creating the adapter
-        MyListAdapter adapter = new MyListAdapter(getActivity(), R.layout.list_item, list);
+//        MyListAdapter adapter = new MyListAdapter(getActivity(), R.layout.list_item, list);
 
         //attaching adapter to the listview
-        listView.setAdapter(adapter);
+//        listView.setAdapter(adapter);
 
         Button delete_btn = (Button)view.findViewById(R.id.btn_DeleteAccount);
         delete_btn.setOnClickListener(new View.OnClickListener(){
