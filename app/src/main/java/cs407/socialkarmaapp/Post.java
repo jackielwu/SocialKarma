@@ -1,6 +1,8 @@
 package cs407.socialkarmaapp;
 
-public class Post {
+import java.io.Serializable;
+
+public class Post implements Serializable {
     private String postId;
     private int upvoteCount, commentCount;
     private String title, content, author, authorName;

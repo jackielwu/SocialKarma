@@ -39,7 +39,9 @@ import java.util.List;
 import java.util.Map;
 
 import cs407.socialkarmaapp.Adapters.PostAdapterDelegate;
+import cs407.socialkarmaapp.Adapters.PostHeaderDelegate;
 import cs407.socialkarmaapp.Adapters.PostsAdapter;
+import cs407.socialkarmaapp.Adapters.SortBy;
 import cs407.socialkarmaapp.Helpers.APIClient;
 import cs407.socialkarmaapp.Models.Meetup;
 import okhttp3.Call;
@@ -51,6 +53,7 @@ import static com.google.android.gms.location.LocationServices.getFusedLocationP
 public class PostsFragment extends Fragment {
     public static final String EXTRA_POST = "cs407.socialkarmaapp.POST";
     public static final String EXTRA_POST_TITLE = "cs407.socialkarmaapp.POST_TITLE";
+    public static final String EXTRA_POST_OBJ = "cs407.socialkarmaapp.POST_OBJ";
 
     List<Post> list;
     RecyclerView recyclerView;
@@ -76,6 +79,11 @@ public class PostsFragment extends Fragment {
 
             @Override
             public void downVoteButtonClicked(@NotNull String postId) {
+
+            }
+        }, new PostHeaderDelegate() {
+            @Override
+            public void sortByButtonClicked(@NotNull SortBy sortBy) {
 
             }
         });

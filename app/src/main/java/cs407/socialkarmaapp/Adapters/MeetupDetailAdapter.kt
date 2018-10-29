@@ -92,7 +92,7 @@ class MeetupDetailViewHolder(val view: View): RecyclerView.ViewHolder(view) {
         titleTextView.text = meetup.title
         organizerTextView.text = meetup.organizerName
         meetup.shortDescription?.let {
-            descriptionTextView.text = meetup.shortDescription
+            descriptionTextView.text = meetup.description
         } ?: run {
             descriptionTextView.visibility = View.GONE
         }

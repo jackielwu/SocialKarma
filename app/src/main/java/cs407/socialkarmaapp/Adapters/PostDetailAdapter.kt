@@ -1,35 +1,55 @@
 package cs407.socialkarmaapp.Adapters
 
-import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import cs407.socialkarmaapp.*
-import cs407.socialkarmaapp.Models.Meetup
+import cs407.socialkarmaapp.Models.Comment
+import cs407.socialkarmaapp.Post
+import cs407.socialkarmaapp.R
+import org.w3c.dom.Text
+import java.text.SimpleDateFormat
+import java.util.*
 
-interface PostAdapterDelegate {
+enum class SortBy {
+    LATEST, OLDEST
+}
+
+interface PostHeaderDelegate {
+    fun sortByButtonClicked(sortBy: SortBy)
+}
+
+interface CommentAdapterDelegate {
     fun upVoteButtonClicked(postId: String)
     fun downVoteButtonClicked(postId: String)
 }
 
-class PostsAdapter(private var posts: MutableList<Post>, private val context: Context, private val delegate: PostAdapterDelegate, private val headerDelegate: PostHeaderDelegate): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    fun setPosts(newPosts: MutableList<Post>) {
-        this.posts = newPosts
+class PostDetailAdapter(private var post: Post?, private var comments: MutableList<Comment>, private val delegate: PostAdapterDelegate, private val headerDelegate: PostHeaderDelegate, private val commentDelegate: CommentAdapterDelegate): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    fun setComments(newComments: MutableList<Comment>) {
+        this.comments = newComments
         this.notifyDataSetChanged()
     }
 
-    fun addToPosts(newPosts: List<Post>) {
-        val index = this.posts.size
-        this.posts.addAll(newPosts)
-        this.notifyItemRangeInserted(index, newPosts.size)
+    fun addToMeetups(newComments: List<Comment>) {
+        val index = this.comments.size
+        this.comments.addAll(newComments)
+        this.notifyItemRangeInserted(index, newComments.size)
     }
 
     override fun getItemCount(): Int {
-        return 1 + posts.size
+        this.post?.let {
+            if (comments.size == 0) {
+                return 2
+            } else {
+                return 2 + comments.size
+            }
+        } ?: run {
+            return 0
+        }
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -37,8 +57,11 @@ class PostsAdapter(private var posts: MutableList<Post>, private val context: Co
             0 -> {
                 return 0
             }
-            else -> {
+            1 -> {
                 return 1
+            }
+            else -> {
+                return 2
             }
         }
     }
@@ -47,13 +70,18 @@ class PostsAdapter(private var posts: MutableList<Post>, private val context: Co
         when (viewType) {
             0 -> {
                 val layoutInflater = LayoutInflater.from(parent.context)
+                val cellForRow = layoutInflater.inflate(R.layout.list_item, parent, false)
+                return PostDetailViewHolder(cellForRow)
+            }
+            1 -> {
+                val layoutInflater = LayoutInflater.from(parent.context)
                 val cellForRow = layoutInflater.inflate(R.layout.post_header_row, parent, false)
                 return CommentHeaderViewHolder(cellForRow)
             }
             else -> {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val cellForRow = layoutInflater.inflate(R.layout.list_item, parent, false)
-                return PostViewHolder(cellForRow)
+                val cellForRow = layoutInflater.inflate(R.layout.comment_item, parent, false)
+                return CommentViewHolder(cellForRow)
             }
         }
     }
@@ -61,6 +89,12 @@ class PostsAdapter(private var posts: MutableList<Post>, private val context: Co
     override fun onBindViewHolder(p0: RecyclerView.ViewHolder, p1: Int) {
         when (p0.itemViewType) {
             0 -> {
+                val viewHolder = p0 as PostDetailViewHolder
+                this.post?.let {
+                    viewHolder.setupView(it, delegate)
+                }
+            }
+            1 -> {
                 val viewHolder = p0 as CommentHeaderViewHolder
                 val sortByButton = viewHolder.view.findViewById<Button>(R.id.button_post_sortby)
                 sortByButton.setOnClickListener {
@@ -68,44 +102,42 @@ class PostsAdapter(private var posts: MutableList<Post>, private val context: Co
                 }
             }
             else -> {
-                (p0 as PostViewHolder).setupView(posts, p1 - 1, delegate)
-                (p0 as PostViewHolder).didSelectRow(posts, p1 - 1, context)
+                val viewHolder = p0 as CommentViewHolder
+                viewHolder.setupView(comments[p1 - 2], commentDelegate)
             }
         }
     }
 }
 
-class PostViewHolder(val view: View): RecyclerView.ViewHolder(view) {
-    fun setupView(posts: List<Post>, index: Int, delegate: PostAdapterDelegate) {
-        val post = posts.get(index)
+class PostDetailViewHolder(val view: View): RecyclerView.ViewHolder(view) {
+    fun setupView(post: Post, delegate: PostAdapterDelegate) {
         val titleTextView = view.findViewById<TextView>(R.id.textView_post_title)
         val authorTextView = view.findViewById<TextView>(R.id.textView_post_author)
         val descriptionTextView = view.findViewById<TextView>(R.id.textView_post_description)
+
         val upVoteButton = view.findViewById<Button>(R.id.button_post_upvote)
         val downVoteButton = view.findViewById<Button>(R.id.button_post_downvote)
-        val upVoteCountTextView = view.findViewById<TextView>(R.id.textView_post_upvote_count)
-        val commentCountTextView = view.findViewById<TextView>(R.id.textView_post_comment_count)
 
         titleTextView.text = post.name
         authorTextView.text = post.authorName
         descriptionTextView.text = post.description
-        upVoteCountTextView.text = "{gmd-thumb-up} " + post.vote_num
-        commentCountTextView.text = "{gmd-mode-comment} " + post.comment_num
 
         upVoteButton.setOnClickListener {
             delegate.upVoteButtonClicked(post.postId)
         }
+
         downVoteButton.setOnClickListener {
             delegate.downVoteButtonClicked(post.postId)
         }
     }
+}
 
-    fun didSelectRow(posts: List<Post>, index: Int, context: Context) {
-        this.view.setOnClickListener {
-            val intent = Intent(context, PostActivity::class.java)
-            val post = posts.get(index)
-            intent.putExtra(PostsFragment.EXTRA_POST_OBJ, post)
-            context.startActivity(intent)
-        }
+class CommentHeaderViewHolder(val view: View): RecyclerView.ViewHolder(view) {
+
+}
+
+class CommentViewHolder(val view: View): RecyclerView.ViewHolder(view) {
+    fun setupView(comment: Comment, delegate: CommentAdapterDelegate) {
+
     }
 }

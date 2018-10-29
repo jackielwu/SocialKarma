@@ -82,4 +82,29 @@ object APIClient {
         val client = OkHttpClient()
         client.newCall(request).enqueue(callback)
     }
+
+    fun postNewPost(location: Location, title: String, description: String, callback: Callback) {
+        var url = baseURL + "/post"
+        val json = JSONObject()
+        json.put("title", title)
+        json.put("content", description)
+        val locationJson = JSONObject()
+        locationJson.put("lat", location.latitude)
+        locationJson.put("lng", location.longitude)
+        json.put("location", locationJson)
+        json.put("author", FirebaseAuth.getInstance().currentUser?.uid)
+
+        val requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json.toString())
+        val request = Request.Builder().url(url).post(requestBody).build()
+        val client = OkHttpClient()
+        client.newCall(request).enqueue(callback)
+    }
+
+    fun getComments(postId: String, callback: Callback) {
+        var url = baseURL + "/post/comments/" + postId
+
+        val request = Request.Builder().url(url).build()
+        val client = OkHttpClient()
+        client.newCall(request).enqueue(callback)
+    }
 }

@@ -131,6 +131,10 @@ public class BaseActivity extends AppCompatActivity {
             Intent intent = new Intent(this, AddMeetupActivity.class);
             startActivity(intent);
             return true;
+        } else if (id == R.id.action_add_post) {
+            Intent intent = new Intent(this, CreatePostActivity.class);
+            startActivity(intent);
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
