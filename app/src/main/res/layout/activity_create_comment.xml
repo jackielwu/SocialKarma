@@ -5,10 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/DarkerGhostWhite"
-    tools:context=".CreatePostActivity">
+    tools:context=".CreateCommentActivity">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar_add_post"
+        android:id="@+id/toolbar_add_comment"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:background="@color/GhostWhite"
@@ -24,7 +24,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar_add_post">
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_add_comment">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -32,43 +32,23 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/textView_post_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:text="Post Title"
-                tools:layout_editor_absoluteX="34dp"
-                tools:layout_editor_absoluteY="168dp" />
-
-            <EditText
-                android:id="@+id/editText_post_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:ems="10"
-                android:hint="Post Title"
-                android:inputType="textPersonName"
-                tools:layout_editor_absoluteX="34dp"
-                tools:layout_editor_absoluteY="196dp" />
-
-            <TextView
                 android:id="@+id/textView_comment_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:text="Post" />
+                android:text="Comment" />
 
             <EditText
-                android:id="@+id/editText_post_description"
+                android:id="@+id/editText_comment_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:gravity="top"
                 android:ems="10"
+                android:gravity="top"
                 android:inputType="textMultiLine" />
 
             <Button
-                android:id="@+id/button_submit_post"
+                android:id="@+id/button_submit_comment"
                 style="@style/Widget.MaterialComponents.Button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

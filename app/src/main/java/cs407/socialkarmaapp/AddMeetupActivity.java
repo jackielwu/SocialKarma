@@ -215,13 +215,23 @@ public class AddMeetupActivity extends AppCompatActivity {
                 APIClient.INSTANCE.postNewMeetup(titleEditText.getText().toString(), descriptionEditText.getText().toString(), epochStart, epochEnd, selectedLocation, new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
-                        Toast.makeText(context, "Failed to create a meetup. Please try again later.", Toast.LENGTH_SHORT).show();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(context, "Failed to create a meetup. Please try again later.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
 
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
                         if (response.code() >= 400) {
-                            Toast.makeText(context, "Failed to create a meetup. Please try again later.", Toast.LENGTH_SHORT).show();
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(context, "Failed to create a meetup. Please try again later.", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         } else {
                             finish();
                         }

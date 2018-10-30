@@ -68,7 +68,12 @@ public class MeetupDetailActivity extends AppCompatActivity {
                 APIClient.INSTANCE.postRsvpMeetup(meetupId, new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
-                        Toast.makeText(MeetupDetailActivity.this, "Failed to RSVP to meetup. Please try again later.", Toast.LENGTH_SHORT).show();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(MeetupDetailActivity.this, "Failed to RSVP to meetup. Please try again later.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
 
                     @Override
@@ -85,8 +90,13 @@ public class MeetupDetailActivity extends AppCompatActivity {
         APIClient.INSTANCE.getMeetupDetail(this.meetupId, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                Toast.makeText(MeetupDetailActivity.this, "Failed to show this meetup.", Toast.LENGTH_SHORT).show();
-                finish();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(MeetupDetailActivity.this, "Failed to show this meetup.", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                });
             }
 
             @Override

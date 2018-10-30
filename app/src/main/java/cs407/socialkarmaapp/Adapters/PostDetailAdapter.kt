@@ -1,7 +1,5 @@
 package cs407.socialkarmaapp.Adapters
 
-import android.content.Intent
-import android.graphics.Color
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -11,9 +9,6 @@ import android.widget.TextView
 import cs407.socialkarmaapp.Models.Comment
 import cs407.socialkarmaapp.Post
 import cs407.socialkarmaapp.R
-import org.w3c.dom.Text
-import java.text.SimpleDateFormat
-import java.util.*
 
 enum class SortBy {
     LATEST, OLDEST
@@ -80,7 +75,7 @@ class PostDetailAdapter(private var post: Post?, private var comments: MutableLi
             }
             else -> {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val cellForRow = layoutInflater.inflate(R.layout.comment_item, parent, false)
+                val cellForRow = layoutInflater.inflate(R.layout.comment_row, parent, false)
                 return CommentViewHolder(cellForRow)
             }
         }
@@ -113,7 +108,7 @@ class PostDetailViewHolder(val view: View): RecyclerView.ViewHolder(view) {
     fun setupView(post: Post, delegate: PostAdapterDelegate) {
         val titleTextView = view.findViewById<TextView>(R.id.textView_post_title)
         val authorTextView = view.findViewById<TextView>(R.id.textView_post_author)
-        val descriptionTextView = view.findViewById<TextView>(R.id.textView_post_description)
+        val descriptionTextView = view.findViewById<TextView>(R.id.textView_comment_description)
 
         val upVoteButton = view.findViewById<Button>(R.id.button_post_upvote)
         val downVoteButton = view.findViewById<Button>(R.id.button_post_downvote)
@@ -138,6 +133,20 @@ class CommentHeaderViewHolder(val view: View): RecyclerView.ViewHolder(view) {
 
 class CommentViewHolder(val view: View): RecyclerView.ViewHolder(view) {
     fun setupView(comment: Comment, delegate: CommentAdapterDelegate) {
+        val authorTextView = view.findViewById<TextView>(R.id.textView_comment_author)
+        val descriptionTextView = view.findViewById<TextView>(R.id.textView_comment_description)
+        val upVoteButton = view.findViewById<Button>(R.id.button_comment_upvote)
+        val downVoteButton = view.findViewById<Button>(R.id.button_comment_downvote)
 
+        authorTextView.text = comment.authorName
+        descriptionTextView.text = comment.comment
+
+        upVoteButton.setOnClickListener {
+            delegate.upVoteButtonClicked(comment.postCommentId)
+        }
+
+        downVoteButton.setOnClickListener {
+            delegate.downVoteButtonClicked(comment.postCommentId)
+        }
     }
 }

@@ -1,6 +1,10 @@
 package cs407.socialkarmaapp;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -37,11 +41,26 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 public class PostActivity extends AppCompatActivity {
+    private static class CommentSortByDialog extends DialogFragment {
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle(R.string.title_sort_by)
+                    .setItems(R.array.sortByArray, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            Toast.makeText(getActivity(), "" + which, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+            return builder.create();
+        }
+
+    }
     private Toolbar toolbar;
     private Post post;
 
     private RecyclerView detailRecyclerView;
     private PostDetailAdapter postDetailAdapter;
+    private CommentSortByDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +72,11 @@ public class PostActivity extends AppCompatActivity {
 
         setupToolbar();
         setupViews();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         setupDetails();
     }
 
@@ -67,8 +91,9 @@ public class PostActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_add_comment) {
-//            Intent intent = new Intent(this, CreateCommentActivity.class);
-//            startActivity(intent);
+            Intent intent = new Intent(this, CreateCommentActivity.class);
+            intent.putExtra(PostsFragment.EXTRA_POST_OBJ, post);
+            startActivity(intent);
             return true;
         }
 
@@ -90,6 +115,7 @@ public class PostActivity extends AppCompatActivity {
     private void setupViews() {
         detailRecyclerView = findViewById(R.id.recyclerView_post_detail);
         detailRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        dialog = new CommentSortByDialog();
         postDetailAdapter = new PostDetailAdapter(post, new ArrayList<Comment>(), new PostAdapterDelegate() {
             @Override
             public void upVoteButtonClicked(@NotNull String postId) {
@@ -103,7 +129,7 @@ public class PostActivity extends AppCompatActivity {
         }, new PostHeaderDelegate() {
             @Override
             public void sortByButtonClicked(SortBy sortBy) {
-
+                dialog.show(getSupportFragmentManager(), "commentDialog");
             }
         }, new CommentAdapterDelegate() {
             @Override
@@ -123,8 +149,13 @@ public class PostActivity extends AppCompatActivity {
         APIClient.INSTANCE.getComments(this.post.getPostId(), new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                Toast.makeText(PostActivity.this, "Failed to show this post.", Toast.LENGTH_SHORT).show();
-                finish();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(PostActivity.this, "Failed to show this post.", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                });
             }
 
             @Override

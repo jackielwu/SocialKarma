@@ -50,7 +50,12 @@ public class MeetupActivity extends Fragment {
                 APIClient.INSTANCE.postRsvpMeetup(meetupId, new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
-                        Toast.makeText(getActivity(), "Failed to RSVP to meetup. Please try again later.", Toast.LENGTH_SHORT).show();
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getActivity(), "Failed to RSVP to meetup. Please try again later.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
 
                     @Override

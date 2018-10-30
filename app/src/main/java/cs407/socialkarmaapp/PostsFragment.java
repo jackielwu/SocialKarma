@@ -1,16 +1,22 @@
 package cs407.socialkarmaapp;
 
 import android.Manifest;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -51,6 +57,20 @@ import okhttp3.Response;
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
 public class PostsFragment extends Fragment {
+    private static class PostSortByDialog extends DialogFragment {
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle(R.string.title_sort_by)
+                    .setItems(R.array.sortByArray, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            Toast.makeText(getActivity(), "" + which, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+            return builder.create();
+        }
+
+    }
     public static final String EXTRA_POST = "cs407.socialkarmaapp.POST";
     public static final String EXTRA_POST_TITLE = "cs407.socialkarmaapp.POST_TITLE";
     public static final String EXTRA_POST_OBJ = "cs407.socialkarmaapp.POST_OBJ";
@@ -58,6 +78,7 @@ public class PostsFragment extends Fragment {
     List<Post> list;
     RecyclerView recyclerView;
     PostsAdapter adapter;
+    PostSortByDialog dialog;
 
     private FusedLocationProviderClient mFusedLocationClient;
 
@@ -84,13 +105,13 @@ public class PostsFragment extends Fragment {
         }, new PostHeaderDelegate() {
             @Override
             public void sortByButtonClicked(@NotNull SortBy sortBy) {
-
+                dialog.show(getFragmentManager(), "showSortByDialog");
             }
         });
 
         //attaching adapter to the listview
         recyclerView.setAdapter(adapter);
-
+        dialog = new PostSortByDialog();
         mFusedLocationClient = getFusedLocationProviderClient(getActivity());
         return view;
     }
@@ -115,7 +136,6 @@ public class PostsFragment extends Fragment {
         ActivityCompat.requestPermissions(getActivity(),
                 new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
     }
-
 
     private void getPosts() {
         checkPermissions();
@@ -167,6 +187,7 @@ public class PostsFragment extends Fragment {
             }
         });
     }
+
 
 //    public void openPostIndividual() {
 //        setContentView(R.layout.activity_individual_post);

@@ -9,7 +9,7 @@
     >
 
     <com.mikepenz.iconics.view.IconicsButton
-        android:id="@+id/button_post_upvote"
+        android:id="@+id/button_comment_upvote"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginStart="8dp"
@@ -20,46 +20,33 @@
 
 
     <com.mikepenz.iconics.view.IconicsButton
-        android:id="@+id/button_post_downvote"
+        android:id="@+id/button_comment_downvote"
         android:layout_width="40dp"
         android:layout_height="40dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="{gmd-thumb-down}"
-        app:layout_constraintEnd_toEndOf="@+id/button_post_upvote"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/button_comment_upvote"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_post_upvote" />
+        app:layout_constraintTop_toBottomOf="@+id/button_comment_upvote"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
-        android:id="@+id/textView_post_title"
+        android:id="@+id/textView_comment_author"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="Title"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        app:layout_constrainedWidth="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/button_post_upvote"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textView_post_author"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="2dp"
         android:text="author"
         android:textSize="12sp"
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/button_post_upvote"
-        app:layout_constraintTop_toBottomOf="@+id/textView_post_title" />
+        app:layout_constraintStart_toEndOf="@+id/button_comment_upvote"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textView_comment_description"
@@ -74,11 +61,11 @@
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/button_post_upvote"
-        app:layout_constraintTop_toBottomOf="@+id/textView_post_author" />
+        app:layout_constraintStart_toEndOf="@+id/button_comment_upvote"
+        app:layout_constraintTop_toBottomOf="@+id/textView_comment_author" />
 
     <com.mikepenz.iconics.view.IconicsTextView
-        android:id="@+id/textView_post_upvote_count"
+        android:id="@+id/textView_comment_upvote_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -86,24 +73,14 @@
         android:layout_marginTop="8dp"
         android:text="{gmd-thumb-up} 0"
         android:textSize="18sp"
-        app:layout_constraintEnd_toStartOf="@+id/textView_post_comment_count"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/button_post_downvote"
+        app:layout_constraintStart_toEndOf="@+id/button_comment_downvote"
         app:layout_constraintTop_toBottomOf="@+id/textView_comment_description" />
 
-    <com.mikepenz.iconics.view.IconicsTextView
-        android:id="@+id/textView_post_comment_count"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:text="{gmd-mode-comment} 0"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/textView_post_upvote_count"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/textView_post_upvote_count" />
 
     <View
-        android:id="@+id/view2"
+        android:id="@+id/view3"
         android:layout_width="wrap_content"
         android:layout_height="1dp"
         android:layout_marginTop="8dp"
@@ -112,6 +89,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_post_upvote_count" />
+        app:layout_constraintTop_toBottomOf="@+id/textView_comment_upvote_count" />
 
 </android.support.constraint.ConstraintLayout>

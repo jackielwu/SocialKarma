@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import cs407.socialkarmaapp.*
-import cs407.socialkarmaapp.Models.Meetup
 
 interface PostAdapterDelegate {
     fun upVoteButtonClicked(postId: String)
@@ -80,7 +79,7 @@ class PostViewHolder(val view: View): RecyclerView.ViewHolder(view) {
         val post = posts.get(index)
         val titleTextView = view.findViewById<TextView>(R.id.textView_post_title)
         val authorTextView = view.findViewById<TextView>(R.id.textView_post_author)
-        val descriptionTextView = view.findViewById<TextView>(R.id.textView_post_description)
+        val descriptionTextView = view.findViewById<TextView>(R.id.textView_comment_description)
         val upVoteButton = view.findViewById<Button>(R.id.button_post_upvote)
         val downVoteButton = view.findViewById<Button>(R.id.button_post_downvote)
         val upVoteCountTextView = view.findViewById<TextView>(R.id.textView_post_upvote_count)

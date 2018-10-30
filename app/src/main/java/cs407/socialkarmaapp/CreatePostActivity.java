@@ -87,7 +87,12 @@ public class CreatePostActivity extends AppCompatActivity {
                             APIClient.INSTANCE.postNewPost(location, postTitleEditText.getText().toString(), postDescriptionEditText.getText().toString(), new Callback() {
                                 @Override
                                 public void onFailure(Call call, IOException e) {
-                                    Toast.makeText(CreatePostActivity.this, "Failed to create a new post. Please try again later.", Toast.LENGTH_SHORT).show();
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(CreatePostActivity.this, "Failed to create a new post. Please try again later.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                                 }
 
                                 @Override
