@@ -9,6 +9,7 @@ import android.widget.TextView
 import cs407.socialkarmaapp.Models.Comment
 import cs407.socialkarmaapp.Post
 import cs407.socialkarmaapp.R
+import org.w3c.dom.Text
 
 enum class SortBy {
     LATEST, OLDEST
@@ -109,6 +110,8 @@ class PostDetailViewHolder(val view: View): RecyclerView.ViewHolder(view) {
         val titleTextView = view.findViewById<TextView>(R.id.textView_post_title)
         val authorTextView = view.findViewById<TextView>(R.id.textView_post_author)
         val descriptionTextView = view.findViewById<TextView>(R.id.textView_comment_description)
+        val upVoteCountTextView = view.findViewById<TextView>(R.id.textView_post_upvote_count)
+        val commentCountTextView = view.findViewById<TextView>(R.id.textView_post_comment_count)
 
         val upVoteButton = view.findViewById<Button>(R.id.button_post_upvote)
         val downVoteButton = view.findViewById<Button>(R.id.button_post_downvote)
@@ -116,6 +119,8 @@ class PostDetailViewHolder(val view: View): RecyclerView.ViewHolder(view) {
         titleTextView.text = post.name
         authorTextView.text = post.authorName
         descriptionTextView.text = post.description
+        upVoteCountTextView.text = "{gmd-thumb-up} " + post.vote_num
+        commentCountTextView.text = "{gmd-mode-comment} " + post.comment_num
 
         upVoteButton.setOnClickListener {
             delegate.upVoteButtonClicked(post.postId)
