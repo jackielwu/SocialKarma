@@ -30,7 +30,18 @@ class PostDetailAdapter(private var post: Post?, private var comments: MutableLi
         this.notifyDataSetChanged()
     }
 
-    fun addToMeetups(newComments: List<Comment>) {
+    fun sortComments(sortBy: Int) {
+        when (sortBy) {
+            0 -> {
+                this.comments.sortWith(Comparator { o1, o2 ->
+                    o2.timestamp - o1.timestamp
+                })
+                this.notifyDataSetChanged()
+            }
+        }
+    }
+
+    fun addToComments(newComments: List<Comment>) {
         val index = this.comments.size
         this.comments.addAll(newComments)
         this.notifyItemRangeInserted(index, newComments.size)

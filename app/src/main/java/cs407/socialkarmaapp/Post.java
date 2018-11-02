@@ -50,4 +50,5 @@ public class Post implements Serializable {
     public String getAuthorName() {
         return authorName;
     }
+    public int getTimestamp() {return timestamp;}
 }

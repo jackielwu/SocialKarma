@@ -36,24 +36,36 @@ import cs407.socialkarmaapp.Adapters.SortBy;
 import cs407.socialkarmaapp.Helpers.APIClient;
 import cs407.socialkarmaapp.Models.Comment;
 import cs407.socialkarmaapp.Models.Meetup;
+import cs407.socialkarmaapp.SortByDelegate;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class PostActivity extends AppCompatActivity {
+public class PostActivity extends AppCompatActivity implements SortByDelegate {
     private static class CommentSortByDialog extends DialogFragment {
+        private int selected = 0;
+        private SortByDelegate delegate;
+
+        public CommentSortByDialog(SortByDelegate delegate) {
+            this.delegate = delegate;
+        }
+
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle(R.string.title_sort_by)
                     .setItems(R.array.sortByArray, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            Toast.makeText(getActivity(), "" + which, Toast.LENGTH_SHORT).show();
+                            selected = which;
+                            delegate.sortByClicked(which);
                         }
                     });
             return builder.create();
         }
 
+        public int getSelected() {
+            return selected;
+        }
     }
     private Toolbar toolbar;
     private Post post;
@@ -100,6 +112,11 @@ public class PostActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void sortByClicked(int which) {
+        postDetailAdapter.sortComments(which);
+    }
+
     private void setupToolbar() {
         toolbar = findViewById(R.id.toolbar_post_detail);
         toolbar.setTitle(post.getTitle());
@@ -115,7 +132,7 @@ public class PostActivity extends AppCompatActivity {
     private void setupViews() {
         detailRecyclerView = findViewById(R.id.recyclerView_post_detail);
         detailRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        dialog = new CommentSortByDialog();
+        dialog = new CommentSortByDialog(this);
         postDetailAdapter = new PostDetailAdapter(post, new ArrayList<Comment>(), new PostAdapterDelegate() {
             @Override
             public void upVoteButtonClicked(@NotNull String postId) {
@@ -146,7 +163,7 @@ public class PostActivity extends AppCompatActivity {
     }
 
     private void setupDetails() {
-        APIClient.INSTANCE.getComments(this.post.getPostId(), new Callback() {
+        APIClient.INSTANCE.getComments(this.post.getPostId(), dialog.selected, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 runOnUiThread(new Runnable() {
