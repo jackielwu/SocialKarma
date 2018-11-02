@@ -56,20 +56,36 @@ import okhttp3.Response;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
-public class PostsFragment extends Fragment {
+interface SortByDelegate {
+    public void sortByClicked(int which);
+}
+
+public class PostsFragment extends Fragment implements SortByDelegate {
+
     private static class PostSortByDialog extends DialogFragment {
+        private int selected = 0;
+        private SortByDelegate delegate;
+
+        public PostSortByDialog(SortByDelegate delegate) {
+            this.delegate = delegate;
+        }
+
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle(R.string.title_sort_by)
                     .setItems(R.array.sortByArray, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            Toast.makeText(getActivity(), "" + which, Toast.LENGTH_SHORT).show();
+                            selected = which;
+                            delegate.sortByClicked(which);
                         }
                     });
             return builder.create();
         }
 
+        public int getSelected() {
+            return selected;
+        }
     }
     public static final String EXTRA_POST = "cs407.socialkarmaapp.POST";
     public static final String EXTRA_POST_TITLE = "cs407.socialkarmaapp.POST_TITLE";
@@ -111,7 +127,7 @@ public class PostsFragment extends Fragment {
 
         //attaching adapter to the listview
         recyclerView.setAdapter(adapter);
-        dialog = new PostSortByDialog();
+        dialog = new PostSortByDialog(this);
         mFusedLocationClient = getFusedLocationProviderClient(getActivity());
         return view;
     }
@@ -137,6 +153,11 @@ public class PostsFragment extends Fragment {
                 new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
     }
 
+    @Override
+    public void sortByClicked(int which) {
+        adapter.sortPosts(which);
+    }
+
     private void getPosts() {
         checkPermissions();
         mFusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
@@ -159,7 +180,7 @@ public class PostsFragment extends Fragment {
                             String geolocation = map.get("geo");
 
                             if (geolocation != null) {
-                                APIClient.INSTANCE.getPosts(geolocation, null, new Callback() {
+                                APIClient.INSTANCE.getPosts(geolocation, dialog.getSelected(), null, new Callback() {
                                     @Override
                                     public void onFailure(Call call, IOException e) {
                                         System.out.println("Could not get posts.");

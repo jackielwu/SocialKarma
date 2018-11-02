@@ -21,6 +21,23 @@ class PostsAdapter(private var posts: MutableList<Post>, private val context: Co
         this.notifyDataSetChanged()
     }
 
+    fun sortPosts(sortBy: Int) {
+        when (sortBy) {
+            0 -> {
+                this.posts.sortWith(Comparator { o1, o2 ->
+                    o2.timestamp - o1.timestamp
+                })
+                this.notifyDataSetChanged()
+            }
+            1 -> {
+                this.posts.sortWith(Comparator { o1, o2 ->
+                    o2.votes - o1.votes
+                })
+                this.notifyDataSetChanged();
+            }
+        }
+    }
+
     fun addToPosts(newPosts: List<Post>) {
         val index = this.posts.size
         this.posts.addAll(newPosts)

@@ -12,7 +12,7 @@ import cs407.socialkarmaapp.R
 import org.w3c.dom.Text
 
 enum class SortBy {
-    LATEST, OLDEST
+    LATEST, TOP
 }
 
 interface PostHeaderDelegate {
@@ -30,7 +30,24 @@ class PostDetailAdapter(private var post: Post?, private var comments: MutableLi
         this.notifyDataSetChanged()
     }
 
-    fun addToMeetups(newComments: List<Comment>) {
+    fun sortComments(sortBy: Int) {
+        when (sortBy) {
+            0 -> {
+                this.comments.sortWith(Comparator { o1, o2 ->
+                    o2.timestamp - o1.timestamp
+                })
+                this.notifyDataSetChanged()
+            }
+            1 -> {
+                this.comments.sortWith(Comparator { o1, o2 ->
+                    o2.votes - o1.votes
+                })
+                this.notifyDataSetChanged()
+            }
+        }
+    }
+
+    fun addToComments(newComments: List<Comment>) {
         val index = this.comments.size
         this.comments.addAll(newComments)
         this.notifyItemRangeInserted(index, newComments.size)
