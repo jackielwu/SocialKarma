@@ -136,12 +136,64 @@ public class PostActivity extends AppCompatActivity implements SortByDelegate {
         postDetailAdapter = new PostDetailAdapter(post, new ArrayList<Comment>(), new PostAdapterDelegate() {
             @Override
             public void upVoteButtonClicked(Post post) {
+                final Post p = post;
+                APIClient.INSTANCE.postPostVote(p.getPostId(), 1, new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(PostActivity.this, "Failed to upvote this post.", Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
+                        });
+                    }
 
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        if (response.code() >= 400) {
+                            return;
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                p.setVotes(p.getVotes() + 1);
+                                postDetailAdapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
+                });
             }
 
             @Override
             public void downVoteButtonClicked(Post post) {
+                final Post p = post;
+                APIClient.INSTANCE.postPostVote(p.getPostId(), -1, new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(PostActivity.this, "Failed to upvote this post.", Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
+                        });
+                    }
 
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        if (response.code() >= 400) {
+                            return;
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                p.setVotes(p.getVotes() - 1);
+                                postDetailAdapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
+                });
             }
         }, new PostHeaderDelegate() {
             @Override
@@ -151,7 +203,33 @@ public class PostActivity extends AppCompatActivity implements SortByDelegate {
         }, new CommentAdapterDelegate() {
             @Override
             public void upVoteButtonClicked(Comment comment) {
+                final Comment c = comment;
+                APIClient.INSTANCE.postPostVote(c.getPostCommentId(), 1, new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(PostActivity.this, "Failed to upvote this post.", Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
+                        });
+                    }
 
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        if (response.code() >= 400) {
+                            return;
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                c.votes += 1;
+                                postDetailAdapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
+                });
             }
 
             @Override

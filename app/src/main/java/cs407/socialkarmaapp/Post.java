@@ -50,7 +50,7 @@ public class Post implements Serializable {
     public String getAuthorName() {
         return authorName;
     }
-    public int getTimestamp() {return timestamp;}
-    public int getVotes() {return votes;}
-    //commit
+    public int getTimestamp() { return timestamp; }
+    public int getVotes() { return votes; }
+    public void setVotes(int vote) {this.votes = vote; }
 }
