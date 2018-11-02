@@ -8,6 +8,8 @@ public class Post implements Serializable {
     private String title, content, author, authorName;
     private int timestamp;
 
+    public Post() {}
+
     public Post(String postId, int votes, int commentCount, String title, String content, String author, int timestamp, String authorName) {
         this.postId = postId;
         this.title = title;
@@ -18,9 +20,7 @@ public class Post implements Serializable {
         this.commentCount = commentCount;
         this.timestamp = timestamp;
     }
-    public Post() {
-        this.postId = "-LPu0HlkFJEMUzfezUCt"; // need to fix. it is uid of a@a.com
-    }
+
     public int getUpvoteCount() {
         return votes;
     }
@@ -53,4 +53,5 @@ public class Post implements Serializable {
     public int getTimestamp() { return timestamp; }
     public int getVotes() { return votes; }
     public void setVotes(int vote) {this.votes = vote; }
+    public void setPostId(String postId) {this.postId = postId;}
 }

@@ -1,5 +1,6 @@
 package cs407.socialkarmaapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -46,6 +47,9 @@ public class BaseActivity extends AppCompatActivity {
                 break;
             case R.id.navigation_meetup:
                 getMenuInflater().inflate(R.menu.meetups_menu, menu);
+                break;
+            case R.id.navigation_profile:
+                getMenuInflater().inflate(R.menu.profile_menu, menu);
                 break;
             default:
                 getMenuInflater().inflate(R.menu.default_menu, menu);
@@ -135,8 +139,16 @@ public class BaseActivity extends AppCompatActivity {
             Intent intent = new Intent(this, CreatePostActivity.class);
             startActivity(intent);
             return true;
+        } else if (id == R.id.action_signout) {
+            FirebaseAuth.getInstance().signOut();
+            launchMainActivity(this);
         }
-
         return super.onOptionsItemSelected(item);
+    }
+
+    public static void launchMainActivity(Context context) {
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        context.startActivity(intent);
     }
 }

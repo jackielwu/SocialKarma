@@ -89,6 +89,7 @@ public class PostActivity extends AppCompatActivity implements SortByDelegate {
     @Override
     protected void onResume() {
         super.onResume();
+        postDetailAdapter.setSortby(this.dialog.getSelected());
         setupDetails();
     }
 

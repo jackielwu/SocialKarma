@@ -6,9 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import cs407.socialkarmaapp.Models.Comment
 import cs407.socialkarmaapp.Post
 import cs407.socialkarmaapp.R
+import cs407.socialkarmaapp.R.id.context
+import cs407.socialkarmaapp.R.id.sort
 import org.w3c.dom.Text
 
 enum class SortBy {
@@ -25,6 +28,8 @@ interface CommentAdapterDelegate {
 }
 
 class PostDetailAdapter(private var post: Post?, private var comments: MutableList<Comment>, private val delegate: PostAdapterDelegate, private val headerDelegate: PostHeaderDelegate, private val commentDelegate: CommentAdapterDelegate): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    var sortby: Int = 0
+
     fun setComments(newComments: MutableList<Comment>) {
         this.comments = newComments
         this.notifyDataSetChanged()
@@ -36,12 +41,14 @@ class PostDetailAdapter(private var post: Post?, private var comments: MutableLi
                 this.comments.sortWith(Comparator { o1, o2 ->
                     o2.timestamp - o1.timestamp
                 })
+                this.sortby = 0
                 this.notifyDataSetChanged()
             }
             1 -> {
                 this.comments.sortWith(Comparator { o1, o2 ->
                     o2.votes - o1.votes
                 })
+                this.sortby = 1
                 this.notifyDataSetChanged()
             }
         }
@@ -89,6 +96,7 @@ class PostDetailAdapter(private var post: Post?, private var comments: MutableLi
             1 -> {
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val cellForRow = layoutInflater.inflate(R.layout.post_header_row, parent, false)
+
                 return CommentHeaderViewHolder(cellForRow)
             }
             else -> {
@@ -110,6 +118,14 @@ class PostDetailAdapter(private var post: Post?, private var comments: MutableLi
             1 -> {
                 val viewHolder = p0 as CommentHeaderViewHolder
                 val sortByButton = viewHolder.view.findViewById<Button>(R.id.button_post_sortby)
+                when (sortby) {
+                    0 -> {
+                        sortByButton.setText("Sort By: {gmd-access-time}")
+                    }
+                    1 -> {
+                        sortByButton.setText("Sort By: {gmd-thumb-up}")
+                    }
+                }
                 sortByButton.setOnClickListener {
                     headerDelegate.sortByButtonClicked(SortBy.LATEST)
                 }

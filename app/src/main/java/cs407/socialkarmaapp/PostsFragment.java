@@ -111,12 +111,62 @@ public class PostsFragment extends Fragment implements SortByDelegate {
         adapter = new PostsAdapter(list, getActivity(), new PostAdapterDelegate() {
             @Override
             public void upVoteButtonClicked(Post post) {
+                final Post p = post;
+                APIClient.INSTANCE.postPostVote(p.getPostId(), 1, new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getActivity(), "Failed to upvote this post.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
 
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        if (response.code() >= 400) {
+                            return;
+                        }
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                p.setVotes(p.getVotes() + 1);
+                                adapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
+                });
             }
 
             @Override
             public void downVoteButtonClicked(Post post) {
+                final Post p = post;
+                APIClient.INSTANCE.postPostVote(p.getPostId(), -1, new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getActivity(), "Failed to downvote this post.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
 
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        if (response.code() >= 400) {
+                            return;
+                        }
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                p.setVotes(p.getVotes() - 1);
+                                adapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
+                });
             }
         }, new PostHeaderDelegate() {
             @Override
@@ -135,6 +185,7 @@ public class PostsFragment extends Fragment implements SortByDelegate {
     @Override
     public void onResume() {
         super.onResume();
+        adapter.setSortby(this.dialog.getSelected());
         getPosts();
     }
 
