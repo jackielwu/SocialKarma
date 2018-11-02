@@ -68,14 +68,14 @@ public class ProfileFragment extends Fragment {
         database = FirebaseDatabase.getInstance();
         username.setText(currentFirebaseUser.getEmail());
 
-        queryKarma = database.getReference("users").orderByChild("username").equalTo(currentFirebaseUser.getEmail());
+        queryKarma = database.getReference("users/" + uid);
 
         queryKarma.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 System.out.println(user.username);
-                karma.setText(("Karma point : " + user.Karma));
+                karma.setText(("Karma: " + user.karma));
             }
 
             @Override
