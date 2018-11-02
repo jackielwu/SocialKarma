@@ -110,12 +110,12 @@ public class PostsFragment extends Fragment implements SortByDelegate {
         //creating the adapter
         adapter = new PostsAdapter(list, getActivity(), new PostAdapterDelegate() {
             @Override
-            public void upVoteButtonClicked(@NotNull String postId) {
+            public void upVoteButtonClicked(Post post) {
 
             }
 
             @Override
-            public void downVoteButtonClicked(@NotNull String postId) {
+            public void downVoteButtonClicked(Post post) {
 
             }
         }, new PostHeaderDelegate() {

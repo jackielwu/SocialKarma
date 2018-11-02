@@ -20,8 +20,8 @@ interface PostHeaderDelegate {
 }
 
 interface CommentAdapterDelegate {
-    fun upVoteButtonClicked(postId: String)
-    fun downVoteButtonClicked(postId: String)
+    fun upVoteButtonClicked(comment: Comment)
+    fun downVoteButtonClicked(comment: Comment)
 }
 
 class PostDetailAdapter(private var post: Post?, private var comments: MutableList<Comment>, private val delegate: PostAdapterDelegate, private val headerDelegate: PostHeaderDelegate, private val commentDelegate: CommentAdapterDelegate): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -140,11 +140,11 @@ class PostDetailViewHolder(val view: View): RecyclerView.ViewHolder(view) {
         commentCountTextView.text = "{gmd-mode-comment} " + post.commentCount
 
         upVoteButton.setOnClickListener {
-            delegate.upVoteButtonClicked(post.postId)
+            delegate.upVoteButtonClicked(post)
         }
 
         downVoteButton.setOnClickListener {
-            delegate.downVoteButtonClicked(post.postId)
+            delegate.downVoteButtonClicked(post)
         }
     }
 }
@@ -166,11 +166,11 @@ class CommentViewHolder(val view: View): RecyclerView.ViewHolder(view) {
         votesTextView.text = "{gmd-thumb-up} " + comment.votes
 
         upVoteButton.setOnClickListener {
-            delegate.upVoteButtonClicked(comment.postCommentId)
+            delegate.upVoteButtonClicked(comment)
         }
 
         downVoteButton.setOnClickListener {
-            delegate.downVoteButtonClicked(comment.postCommentId)
+            delegate.downVoteButtonClicked(comment)
         }
     }
 }

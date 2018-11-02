@@ -135,12 +135,12 @@ public class PostActivity extends AppCompatActivity implements SortByDelegate {
         dialog = new CommentSortByDialog(this);
         postDetailAdapter = new PostDetailAdapter(post, new ArrayList<Comment>(), new PostAdapterDelegate() {
             @Override
-            public void upVoteButtonClicked(@NotNull String postId) {
+            public void upVoteButtonClicked(Post post) {
 
             }
 
             @Override
-            public void downVoteButtonClicked(@NotNull String postId) {
+            public void downVoteButtonClicked(Post post) {
 
             }
         }, new PostHeaderDelegate() {
@@ -150,12 +150,12 @@ public class PostActivity extends AppCompatActivity implements SortByDelegate {
             }
         }, new CommentAdapterDelegate() {
             @Override
-            public void upVoteButtonClicked(String postId) {
+            public void upVoteButtonClicked(Comment comment) {
 
             }
 
             @Override
-            public void downVoteButtonClicked(String postId) {
+            public void downVoteButtonClicked(Comment comment) {
 
             }
         });

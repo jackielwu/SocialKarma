@@ -11,8 +11,8 @@ import android.widget.TextView
 import cs407.socialkarmaapp.*
 
 interface PostAdapterDelegate {
-    fun upVoteButtonClicked(postId: String)
-    fun downVoteButtonClicked(postId: String)
+    fun upVoteButtonClicked(post: Post)
+    fun downVoteButtonClicked(post: Post)
 }
 
 class PostsAdapter(private var posts: MutableList<Post>, private val context: Context, private val delegate: PostAdapterDelegate, private val headerDelegate: PostHeaderDelegate): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -109,10 +109,10 @@ class PostViewHolder(val view: View): RecyclerView.ViewHolder(view) {
         commentCountTextView.text = "{gmd-mode-comment} " + post.commentCount
 
         upVoteButton.setOnClickListener {
-            delegate.upVoteButtonClicked(post.postId)
+            delegate.upVoteButtonClicked(post)
         }
         downVoteButton.setOnClickListener {
-            delegate.downVoteButtonClicked(post.postId)
+            delegate.downVoteButtonClicked(post)
         }
     }
 

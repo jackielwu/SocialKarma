@@ -90,12 +90,12 @@ public class ProfileFragment extends Fragment {
         commentAdapter = new CommentAdapter(getActivity(), commentList);
         postsAdapter = new PostsAdapter(list, getActivity(),new PostAdapterDelegate() {
             @Override
-            public void upVoteButtonClicked(@NotNull String postId) {
+            public void upVoteButtonClicked(Post post) {
                 Log.e("","up");
             }
 
             @Override
-            public void downVoteButtonClicked(@NotNull String postId) {
+            public void downVoteButtonClicked(Post post) {
                 Log.e("","down");
             }
         }, new PostHeaderDelegate() {
