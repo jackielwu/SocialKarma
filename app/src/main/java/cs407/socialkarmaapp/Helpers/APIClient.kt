@@ -125,5 +125,29 @@ object APIClient {
         client.newCall(request).enqueue(callback)
     }
 
-    fun postPostVote() {}
+    fun postPostVote(postId: String, vote: Int, callback: Callback) {
+        var url = baseURL + "/post/vote"
+        var json = JSONObject()
+        json.put("userId", FirebaseAuth.getInstance().currentUser?.uid)
+        json.put("postId", postId)
+        json.put("vote", vote)
+
+        val requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json.toString())
+        val request = Request.Builder().url(url).post(requestBody).build()
+        val client = OkHttpClient()
+        client.newCall(request).enqueue(callback)
+    }
+
+    fun postPostCommentVote(postCommentId: String, vote: Int, callback: Callback) {
+        var url = baseURL + "/post/comment/vote"
+        var json = JSONObject()
+        json.put("userId", FirebaseAuth.getInstance().currentUser?.uid)
+        json.put("postId", postCommentId)
+        json.put("vote", vote)
+
+        val requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json.toString())
+        val request = Request.Builder().url(url).post(requestBody).build()
+        val client = OkHttpClient()
+        client.newCall(request).enqueue(callback)
+    }
 }
