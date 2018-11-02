@@ -19,7 +19,7 @@ public class Post implements Serializable {
         this.timestamp = timestamp;
     }
     public Post() {
-        this.postId = "-LPu0HlkFJEMUzfezUCt";
+        this.postId = "-LPu0HlkFJEMUzfezUCt"; // need to fix. it is uid of a@a.com
     }
     public int getUpvoteCount() {
         return upvoteCount;
