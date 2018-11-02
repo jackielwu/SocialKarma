@@ -235,7 +235,7 @@ public class PostActivity extends AppCompatActivity implements SortByDelegate {
             @Override
             public void downVoteButtonClicked(Comment comment) {
                 final Comment c = comment;
-                APIClient.INSTANCE.postPostCommentVote(c.getPostCommentId(), 1, new Callback() {
+                APIClient.INSTANCE.postPostCommentVote(c.getPostCommentId(), -1, new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
                         runOnUiThread(new Runnable() {
