@@ -51,4 +51,6 @@ public class Post implements Serializable {
         return authorName;
     }
     public int getTimestamp() {return timestamp;}
+    public int getVotes() {return votes;}
+    //commit
 }
