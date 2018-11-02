@@ -2,6 +2,6 @@
 <resources>
     <array name="sortByArray">
         <item>Time</item>
-        <item>Popularity</item>
+        <item>Top</item>
     </array>
 </resources>
