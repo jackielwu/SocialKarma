@@ -102,7 +102,7 @@ public class PostActivity extends AppCompatActivity {
 
     private void setupToolbar() {
         toolbar = findViewById(R.id.toolbar_post_detail);
-        toolbar.setTitle(post.getName());
+        toolbar.setTitle(post.getTitle());
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1079064396038-53u2vn89lstns1foum6r9d2ejath1eb2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "cs407.socialkarmaapp",
+            "certificate_hash": "c755618a73ba171b575989c2e0757ca92b81d5c4"
+          }
+        },
+        {
           "client_id": "1079064396038-iqgos4lptvl5dtj2rkl2e5lc1gg1q627.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +37,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1079064396038-iqgos4lptvl5dtj2rkl2e5lc1gg1q627.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2

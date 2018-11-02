@@ -65,6 +65,8 @@ public class SignUpActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "User registered successfully", Toast.LENGTH_LONG).show();
                         DatabaseReference dbref = FirebaseDatabase.getInstance().getReference();
                         dbref.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("username").setValue(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+                        dbref.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Karma").setValue(0);
+
                         finish();
                     }
                     else{

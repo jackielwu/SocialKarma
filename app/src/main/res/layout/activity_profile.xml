@@ -117,13 +117,13 @@
             app:rrb_textColor="#000000" />
     </co.ceryle.radiorealbutton.RadioRealButtonGroup>
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/profile_list"
         android:layout_width="383dp"
         android:layout_height="401dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

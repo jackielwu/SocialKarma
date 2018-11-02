@@ -85,11 +85,11 @@ class PostViewHolder(val view: View): RecyclerView.ViewHolder(view) {
         val upVoteCountTextView = view.findViewById<TextView>(R.id.textView_post_upvote_count)
         val commentCountTextView = view.findViewById<TextView>(R.id.textView_post_comment_count)
 
-        titleTextView.text = post.name
+        titleTextView.text = post.title
         authorTextView.text = post.authorName
-        descriptionTextView.text = post.description
-        upVoteCountTextView.text = "{gmd-thumb-up} " + post.vote_num
-        commentCountTextView.text = "{gmd-mode-comment} " + post.comment_num
+        descriptionTextView.text = post.content
+        upVoteCountTextView.text = "{gmd-thumb-up} " + post.upvoteCount
+        commentCountTextView.text = "{gmd-mode-comment} " + post.commentCount
 
         upVoteButton.setOnClickListener {
             delegate.upVoteButtonClicked(post.postId)
