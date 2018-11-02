@@ -142,7 +142,7 @@ object APIClient {
         var url = baseURL + "/post/comment/vote"
         var json = JSONObject()
         json.put("userId", FirebaseAuth.getInstance().currentUser?.uid)
-        json.put("postId", postCommentId)
+        json.put("postCommentId", postCommentId)
         json.put("vote", vote)
 
         val requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json.toString())

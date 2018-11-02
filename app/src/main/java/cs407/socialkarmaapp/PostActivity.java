@@ -174,7 +174,7 @@ public class PostActivity extends AppCompatActivity implements SortByDelegate {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(PostActivity.this, "Failed to upvote this post.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(PostActivity.this, "Failed to downvote this post.", Toast.LENGTH_SHORT).show();
                                 finish();
                             }
                         });
@@ -204,13 +204,13 @@ public class PostActivity extends AppCompatActivity implements SortByDelegate {
             @Override
             public void upVoteButtonClicked(Comment comment) {
                 final Comment c = comment;
-                APIClient.INSTANCE.postPostVote(c.getPostCommentId(), 1, new Callback() {
+                APIClient.INSTANCE.postPostCommentVote(c.getPostCommentId(), 1, new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(PostActivity.this, "Failed to upvote this post.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(PostActivity.this, "Failed to upvote this comment.", Toast.LENGTH_SHORT).show();
                                 finish();
                             }
                         });
@@ -224,7 +224,7 @@ public class PostActivity extends AppCompatActivity implements SortByDelegate {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                c.votes += 1;
+                                c.setVotes(c.getVotes() + 1);
                                 postDetailAdapter.notifyDataSetChanged();
                             }
                         });
@@ -234,7 +234,33 @@ public class PostActivity extends AppCompatActivity implements SortByDelegate {
 
             @Override
             public void downVoteButtonClicked(Comment comment) {
+                final Comment c = comment;
+                APIClient.INSTANCE.postPostCommentVote(c.getPostCommentId(), 1, new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(PostActivity.this, "Failed to downvote this comment.", Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
+                        });
+                    }
 
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        if (response.code() >= 400) {
+                            return;
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                c.setVotes(c.getVotes() - 1);
+                                postDetailAdapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
+                });
             }
         });
         detailRecyclerView.setAdapter(postDetailAdapter);
