@@ -43,10 +43,11 @@ import okhttp3.Response;
 
 public class PostActivity extends AppCompatActivity implements SortByDelegate {
     private static class CommentSortByDialog extends DialogFragment {
-        private int selected = 0;
+        private int selected;
         private SortByDelegate delegate;
 
         public CommentSortByDialog(SortByDelegate delegate) {
+            selected = 0;
             this.delegate = delegate;
         }
 

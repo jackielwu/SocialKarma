@@ -63,10 +63,11 @@ interface SortByDelegate {
 public class PostsFragment extends Fragment implements SortByDelegate {
 
     private static class PostSortByDialog extends DialogFragment {
-        private int selected = 0;
+        private int selected;
         private SortByDelegate delegate;
 
         public PostSortByDialog(SortByDelegate delegate) {
+            selected = 0;
             this.delegate = delegate;
         }
 
