@@ -2,34 +2,26 @@ package cs407.socialkarmaapp;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
@@ -43,7 +35,6 @@ import java.util.List;
 import co.ceryle.radiorealbutton.RadioRealButton;
 import co.ceryle.radiorealbutton.RadioRealButtonGroup;
 import cs407.socialkarmaapp.Adapters.CommentAdapterDelegate;
-import cs407.socialkarmaapp.Adapters.CommentHeaderViewHolder;
 import cs407.socialkarmaapp.Adapters.CommentsAdapter;
 import cs407.socialkarmaapp.Adapters.PostAdapterDelegate;
 import cs407.socialkarmaapp.Adapters.PostHeaderDelegate;
@@ -99,10 +90,10 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_profile, parent, false);
-        listView = view.findViewById(R.id.profile_list);
+        listView = view.findViewById(R.id.recyclerView_user_profile);
         listView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        karma = (TextView)view.findViewById(R.id.karmaPoints);
-        username = (TextView)view.findViewById(R.id.profile_username);
+        karma = (TextView)view.findViewById(R.id.textView_user_profile_karmaPoints);
+        username = (TextView)view.findViewById(R.id.textView_user_profile_username);
         currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         uid = currentFirebaseUser.getUid();
         database = FirebaseDatabase.getInstance();
@@ -280,7 +271,7 @@ public class ProfileFragment extends Fragment {
         final RadioRealButton button1 = (RadioRealButton) view.findViewById(R.id.btn_profile_posts);
         final RadioRealButton button2 = (RadioRealButton) view.findViewById(R.id.btn_profile_comments);
 
-        RadioRealButtonGroup group = (RadioRealButtonGroup) view.findViewById(R.id.button_group);
+        RadioRealButtonGroup group = (RadioRealButtonGroup) view.findViewById(R.id.user_profile_button_group);
         group.setPosition(0);
 
         // onClickButton listener detects any click performed on buttons by touch

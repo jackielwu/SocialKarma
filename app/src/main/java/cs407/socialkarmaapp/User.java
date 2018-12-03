@@ -1,6 +1,8 @@
 package cs407.socialkarmaapp;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
     public String username;
     public int karma;
 

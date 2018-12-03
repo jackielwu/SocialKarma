@@ -85,7 +85,12 @@ public class MeetupActivity extends Fragment {
         APIClient.INSTANCE.getMeetups(lastStartTime, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                System.out.println("Could not get meetups.");
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getActivity(), "Failed to retrieve meetups.", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override

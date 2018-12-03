@@ -4,53 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff">
-
+    android:background="@color/WhiteSmoke"
+    tools:context=".UserProfileActivity">
 
     <TextView
         android:id="@+id/textView_user_profile_username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:text="Name"
         android:textAlignment="center"
-        app:layout_constraintBottom_toTopOf="@+id/textView_user_profile_karmaPoints"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <Button
-        android:id="@+id/btn_Changepw"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="4dp"
-        android:text="Change Password"
-        app:layout_constraintBottom_toTopOf="@+id/user_profile_button_group"
-        app:layout_constraintEnd_toStartOf="@+id/btn_DeleteAccount"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_user_profile_karmaPoints"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <Button
-        android:id="@+id/btn_DeleteAccount"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="Delete Account"
-        app:layout_constraintBottom_toTopOf="@+id/user_profile_button_group"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/btn_Changepw"
-        app:layout_constraintTop_toTopOf="@+id/btn_Changepw"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_user_profile" />
 
     <TextView
         android:id="@+id/textView_user_profile_karmaPoints"
@@ -59,35 +27,32 @@
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="8dp"
         android:text="Karma: "
         android:textAlignment="center"
-        app:layout_constraintBottom_toTopOf="@id/btn_Changepw"
+        app:layout_constraintBottom_toTopOf="@+id/user_profile_button_group"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_user_profile_username"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/textView_user_profile_username" />
 
     <co.ceryle.radiorealbutton.RadioRealButtonGroup
         android:id="@+id/user_profile_button_group"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerView_user_profile"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_Changepw"
         app:rrbg_animateDrawables_enter="overshoot"
         app:rrbg_animateTexts_enter="overshoot"
         app:rrbg_dividerColor="#000000"
         app:rrbg_dividerSize="1dp"
         app:rrbg_radius="10dp"
         app:rrbg_selectorColor="#AAAAAA"
-        app:rrbg_selectorSize="6dp">
+        app:rrbg_selectorSize="6dp"
+        tools:layout_editor_absoluteY="118dp">
 
         <co.ceryle.radiorealbutton.RadioRealButton
-            android:id="@+id/btn_profile_posts"
+            android:id="@+id/user_profile_btn_profile_posts"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:rrb_drawableHeight="36dp"
@@ -99,7 +64,7 @@
             app:rrb_textColor="#000000" />
 
         <co.ceryle.radiorealbutton.RadioRealButton
-            android:id="@+id/btn_profile_comments"
+            android:id="@+id/user_profile_btn_profile_comments"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:rrb_drawableGravity="right"
@@ -120,5 +85,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/user_profile_button_group" />
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_user_profile"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:background="@color/GhostWhite"
+        android:minHeight="?attr/actionBarSize"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="?attr/homeAsUpIndicator"
+        app:title=""
+        app:titleTextColor="@android:color/darker_gray"></android.support.v7.widget.Toolbar>
 
 </android.support.constraint.ConstraintLayout>

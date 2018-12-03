@@ -47,6 +47,25 @@ object APIClient {
         client.newCall(request).enqueue(callback)
     }
 
+    fun getComments(postId: String, sortBy: Int, callback: Callback) {
+        var url = baseURL + "/post/comments"
+        val json = JSONObject()
+        json.put("postId", postId)
+        json.put("sortby", sortBy)
+
+        val requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json.toString())
+        val request = Request.Builder().url(url).post(requestBody).build()
+        val client = OkHttpClient()
+        client.newCall(request).enqueue(callback)
+    }
+
+    fun getChats(callback: Callback) {
+        var url = baseURL + "/messages?userId=" + FirebaseAuth.getInstance().currentUser?.uid
+        val request = Request.Builder().url(url).build()
+        val client = OkHttpClient()
+        client.newCall(request).enqueue(callback)
+    }
+
     fun postNewMeetup(title: String, description: String?, startTime: Long, endTime: Long, location: Place, callback: Callback) {
         var url = baseURL + "/meetup"
         val json = JSONObject()
@@ -100,18 +119,6 @@ object APIClient {
         client.newCall(request).enqueue(callback)
     }
 
-    fun getComments(postId: String, sortBy: Int, callback: Callback) {
-        var url = baseURL + "/post/comments"
-        val json = JSONObject()
-        json.put("postId", postId)
-        json.put("sortby", sortBy)
-
-        val requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json.toString())
-        val request = Request.Builder().url(url).post(requestBody).build()
-        val client = OkHttpClient()
-        client.newCall(request).enqueue(callback)
-    }
-
     fun postNewComment(postId: String, comment: String, callback: Callback) {
         var url = baseURL + "/post/comment"
         val json = JSONObject()
@@ -144,6 +151,32 @@ object APIClient {
         json.put("userId", FirebaseAuth.getInstance().currentUser?.uid)
         json.put("postCommentId", postCommentId)
         json.put("vote", vote)
+
+        val requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json.toString())
+        val request = Request.Builder().url(url).post(requestBody).build()
+        val client = OkHttpClient()
+        client.newCall(request).enqueue(callback)
+    }
+
+    fun postChat(partnerId: String, message: String, callback: Callback) {
+        var url = baseURL + "/chat"
+        var json = JSONObject()
+        json.put("userId", FirebaseAuth.getInstance().currentUser?.uid)
+        json.put("partnerId", partnerId)
+        json.put("message", message)
+
+        val requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json.toString())
+        val request = Request.Builder().url(url).post(requestBody).build()
+        val client = OkHttpClient()
+        client.newCall(request).enqueue(callback)
+    }
+
+    fun postMessage(chatId: String, message: String, callback: Callback) {
+        var url = baseURL + "/message"
+        var json = JSONObject()
+        json.put("chatId", chatId)
+        json.put("userId", FirebaseAuth.getInstance().currentUser?.uid)
+        json.put("message", message)
 
         val requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json.toString())
         val request = Request.Builder().url(url).post(requestBody).build()

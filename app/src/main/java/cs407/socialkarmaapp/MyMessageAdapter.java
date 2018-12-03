@@ -1,16 +1,12 @@
 package cs407.socialkarmaapp;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -52,9 +48,9 @@ public class MyMessageAdapter extends ArrayAdapter<message_item> {
         View view = layoutInflater.inflate(resource, null, false);
 
         //getting the view elements of the list from the view
-        TextView textViewName = view.findViewById(R.id.message_sender);
-        TextView textViewContext = view.findViewById(R.id.message_context);
-        TextView textViewTime = view.findViewById(R.id.message_time);
+        TextView textViewName = view.findViewById(R.id.textView_message_sender);
+        TextView textViewContext = view.findViewById(R.id.textView_message_content);
+        TextView textViewTime = view.findViewById(R.id.textView_message_time);
         //getting the hero of the specified position
         message_item item = message_items.get(position);
 
