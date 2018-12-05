@@ -56,6 +56,7 @@ public class ProfileFragment extends Fragment {
     PostsAdapter postsAdapter;
     CommentAdapter commentAdapter;
     TextView karma, username;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_profile, parent, false);
