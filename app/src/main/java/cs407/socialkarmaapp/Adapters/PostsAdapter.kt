@@ -11,14 +11,34 @@ import android.widget.TextView
 import cs407.socialkarmaapp.*
 
 interface PostAdapterDelegate {
-    fun upVoteButtonClicked(postId: String)
-    fun downVoteButtonClicked(postId: String)
+    fun upVoteButtonClicked(post: Post)
+    fun downVoteButtonClicked(post: Post)
 }
 
 class PostsAdapter(private var posts: MutableList<Post>, private val context: Context, private val delegate: PostAdapterDelegate, private val headerDelegate: PostHeaderDelegate): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    var sortby = 0
     fun setPosts(newPosts: MutableList<Post>) {
         this.posts = newPosts
         this.notifyDataSetChanged()
+    }
+
+    fun sortPosts(sortBy: Int) {
+        when (sortBy) {
+            0 -> {
+                this.posts.sortWith(Comparator { o1, o2 ->
+                    o2.timestamp - o1.timestamp
+                })
+                this.sortby = 0
+                this.notifyDataSetChanged()
+            }
+            1 -> {
+                this.posts.sortWith(Comparator { o1, o2 ->
+                    o2.votes - o1.votes
+                })
+                this.sortby = 1
+                this.notifyDataSetChanged()
+            }
+        }
     }
 
     fun addToPosts(newPosts: List<Post>) {
@@ -47,6 +67,14 @@ class PostsAdapter(private var posts: MutableList<Post>, private val context: Co
             0 -> {
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val cellForRow = layoutInflater.inflate(R.layout.post_header_row, parent, false)
+                when (sortby) {
+                    0 -> {
+                        cellForRow.findViewById<Button>(R.id.button_post_sortby).setText("Sort By: {gmd-access-time}")
+                    }
+                    1 -> {
+                        cellForRow.findViewById<Button>(R.id.button_post_sortby).setText("Sort By: {gmd-thumb-up}")
+                    }
+                }
                 return CommentHeaderViewHolder(cellForRow)
             }
             else -> {
@@ -62,6 +90,14 @@ class PostsAdapter(private var posts: MutableList<Post>, private val context: Co
             0 -> {
                 val viewHolder = p0 as CommentHeaderViewHolder
                 val sortByButton = viewHolder.view.findViewById<Button>(R.id.button_post_sortby)
+                when (sortby) {
+                    0 -> {
+                        sortByButton.setText("Sort By: {gmd-access-time}")
+                    }
+                    1 -> {
+                        sortByButton.setText("Sort By: {gmd-thumb-up}")
+                    }
+                }
                 sortByButton.setOnClickListener {
                     headerDelegate.sortByButtonClicked(SortBy.LATEST)
                 }
@@ -92,10 +128,10 @@ class PostViewHolder(val view: View): RecyclerView.ViewHolder(view) {
         commentCountTextView.text = "{gmd-mode-comment} " + post.commentCount
 
         upVoteButton.setOnClickListener {
-            delegate.upVoteButtonClicked(post.postId)
+            delegate.upVoteButtonClicked(post)
         }
         downVoteButton.setOnClickListener {
-            delegate.downVoteButtonClicked(post.postId)
+            delegate.downVoteButtonClicked(post)
         }
     }
 

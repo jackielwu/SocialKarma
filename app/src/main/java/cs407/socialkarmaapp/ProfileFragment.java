@@ -1,10 +1,14 @@
 package cs407.socialkarmaapp;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -38,13 +42,46 @@ import java.util.List;
 
 import co.ceryle.radiorealbutton.RadioRealButton;
 import co.ceryle.radiorealbutton.RadioRealButtonGroup;
+import cs407.socialkarmaapp.Adapters.CommentAdapterDelegate;
+import cs407.socialkarmaapp.Adapters.CommentHeaderViewHolder;
+import cs407.socialkarmaapp.Adapters.CommentsAdapter;
 import cs407.socialkarmaapp.Adapters.PostAdapterDelegate;
 import cs407.socialkarmaapp.Adapters.PostHeaderDelegate;
 import cs407.socialkarmaapp.Adapters.PostsAdapter;
 import cs407.socialkarmaapp.Adapters.SortBy;
 import cs407.socialkarmaapp.Helpers.APIClient;
+import cs407.socialkarmaapp.Models.Comment;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class ProfileFragment extends Fragment {
+    public static class SortByDialog extends DialogFragment {
+        private int selected = 0;
+        private SortByDelegate delegate;
+
+        public SortByDialog(SortByDelegate delegate) {
+            this.delegate = delegate;
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle(R.string.title_sort_by)
+                    .setItems(R.array.sortByArray, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            selected = which;
+                            delegate.sortByClicked(which);
+                        }
+                    });
+            return builder.create();
+        }
+
+        public int getSelected() {
+            return selected;
+        }
+    }
+
     private TextView mTextMessage;
     FirebaseDatabase database;
     List<Post> list;
@@ -54,8 +91,11 @@ public class ProfileFragment extends Fragment {
     String uid;
     Query querypost, querycomment, queryKarma;
     PostsAdapter postsAdapter;
-    CommentAdapter commentAdapter;
+    CommentsAdapter commentAdapter;
     TextView karma, username;
+
+    int groupPosition = 0;
+    SortByDialog dialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
@@ -68,15 +108,25 @@ public class ProfileFragment extends Fragment {
         uid = currentFirebaseUser.getUid();
         database = FirebaseDatabase.getInstance();
         username.setText(currentFirebaseUser.getEmail());
+        dialog = new SortByDialog(new SortByDelegate() {
+            @Override
+            public void sortByClicked(int which) {
+                if (groupPosition == 0) {
+                    postsAdapter.sortPosts(which);
+                } else if (groupPosition == 1) {
+                    commentAdapter.sortPosts(which);
+                }
+            }
+        });
 
-        queryKarma = database.getReference("users").orderByChild("username").equalTo(currentFirebaseUser.getEmail());
+        queryKarma = database.getReference("users/" + uid);
 
-        queryKarma.addValueEventListener(new ValueEventListener() {
+        queryKarma.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 System.out.println(user.username);
-                karma.setText(("Karma point : " + user.Karma));
+                karma.setText(("Karma: " + user.karma));
             }
 
             @Override
@@ -88,21 +138,136 @@ public class ProfileFragment extends Fragment {
         list = new ArrayList<>();
         commentList = new ArrayList<>();
 
-        commentAdapter = new CommentAdapter(getActivity(), commentList);
-        postsAdapter = new PostsAdapter(list, getActivity(),new PostAdapterDelegate() {
+        commentAdapter = new CommentsAdapter(commentList, getActivity(), new CommentAdapterDelegate() {
             @Override
-            public void upVoteButtonClicked(@NotNull String postId) {
-                Log.e("","up");
+            public void upVoteButtonClicked(Comment comment) {
+                final Comment c = comment;
+                APIClient.INSTANCE.postPostCommentVote(c.getPostCommentId(), 1, new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getActivity(), "Failed to upvote this comment.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        if (response.code() >= 400) {
+                            return;
+                        }
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                c.setVotes(c.getVotes() + 1);
+                                commentAdapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
+                });
             }
 
             @Override
-            public void downVoteButtonClicked(@NotNull String postId) {
-                Log.e("","down");
+            public void downVoteButtonClicked(Comment comment) {
+                final Comment c = comment;
+                APIClient.INSTANCE.postPostCommentVote(c.getPostCommentId(), -1, new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getActivity(), "Failed to downvote this comment.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        if (response.code() >= 400) {
+                            return;
+                        }
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                c.setVotes(c.getVotes() - 1);
+                                commentAdapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
+                });
             }
         }, new PostHeaderDelegate() {
             @Override
             public void sortByButtonClicked(@NotNull SortBy sortBy) {
-                Log.e("","sort");
+                dialog.show(getFragmentManager(), "commentDialog");
+            }
+        });
+        postsAdapter = new PostsAdapter(list, getActivity(),new PostAdapterDelegate() {
+            @Override
+            public void upVoteButtonClicked(Post post) {
+                final Post p = post;
+                APIClient.INSTANCE.postPostVote(p.getPostId(), 1, new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getActivity(), "Failed to upvote this post.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        if (response.code() >= 400) {
+                            return;
+                        }
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                p.setVotes(p.getVotes() + 1);
+                                postsAdapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
+                });
+            }
+
+            @Override
+            public void downVoteButtonClicked(Post post) {
+                final Post p = post;
+                APIClient.INSTANCE.postPostVote(p.getPostId(), -1, new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getActivity(), "Failed to downvote this post.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        if (response.code() >= 400) {
+                            return;
+                        }
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                p.setVotes(p.getVotes() - 1);
+                                postsAdapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
+                });
+            }
+        }, new PostHeaderDelegate() {
+            @Override
+            public void sortByButtonClicked(@NotNull SortBy sortBy) {
+                dialog.show(getFragmentManager(), "postsDialog");
             }
         });
 
@@ -117,6 +282,7 @@ public class ProfileFragment extends Fragment {
         final RadioRealButton button2 = (RadioRealButton) view.findViewById(R.id.btn_profile_comments);
 
         RadioRealButtonGroup group = (RadioRealButtonGroup) view.findViewById(R.id.button_group);
+        group.setPosition(0);
 
         // onClickButton listener detects any click performed on buttons by touch
         group.setOnClickedButtonListener(new RadioRealButtonGroup.OnClickedButtonListener() {
@@ -129,10 +295,10 @@ public class ProfileFragment extends Fragment {
                     listView.setAdapter(commentAdapter);
                     querycomment.addListenerForSingleValueEvent(valueEventListener1);
                 }
-                Toast.makeText(getActivity(), "Clicked! Position: " + position, Toast.LENGTH_SHORT).show();
+                groupPosition = position;
+//                Toast.makeText(getActivity(), "Clicked! Position: " + position, Toast.LENGTH_SHORT).show();
             }
         });
-
 
         //list
         //list = new ArrayList<>();
@@ -146,22 +312,33 @@ public class ProfileFragment extends Fragment {
         Button delete_btn = (Button)view.findViewById(R.id.btn_DeleteAccount);
         delete_btn.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
+                final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
                 FirebaseUser tempUser = FirebaseAuth.getInstance().getCurrentUser();
                 tempUser.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if(task.isSuccessful()){
-
+                            FirebaseDatabase.getInstance().getReference("users/" + uid).removeValue();
                             Toast.makeText(getActivity(), "Account deleted", Toast.LENGTH_LONG).show();
-                            Intent intent = new Intent(getActivity(), MainActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(intent);
+                            BaseActivity.launchMainActivity(getActivity());
                         }
                     }
                 });
             }
         });
         return view;
+    }
+
+    public void onResume() {
+        super.onResume();
+
+        if(groupPosition == 0 ) {
+            listView.setAdapter(postsAdapter);
+            querypost.addListenerForSingleValueEvent(valueEventListener);
+        }else if(groupPosition == 1) {
+            listView.setAdapter(commentAdapter);
+            querycomment.addListenerForSingleValueEvent(valueEventListener1);
+        }
     }
 
     //for post
@@ -172,10 +349,16 @@ public class ProfileFragment extends Fragment {
             if (dataSnapshot.exists()) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Post post = snapshot.getValue(Post.class);
+                    post.setPostId(snapshot.getKey());
                     list.add(post);
 
                 }
-                postsAdapter.notifyDataSetChanged();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        postsAdapter.notifyDataSetChanged();
+                    }
+                });
             }
         }
 
@@ -192,10 +375,16 @@ public class ProfileFragment extends Fragment {
             if (dataSnapshot.exists()) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Comment comment = snapshot.getValue(Comment.class);
+                    comment.setPostCommentId(snapshot.getKey());
                     commentList.add(comment);
 
                 }
-                postsAdapter.notifyDataSetChanged();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        commentAdapter.notifyDataSetChanged();
+                    }
+                });
             }
         }
 

@@ -6,13 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import cs407.socialkarmaapp.Models.Comment
 import cs407.socialkarmaapp.Post
 import cs407.socialkarmaapp.R
+import cs407.socialkarmaapp.R.id.context
+import cs407.socialkarmaapp.R.id.sort
 import org.w3c.dom.Text
 
 enum class SortBy {
-    LATEST, OLDEST
+    LATEST, TOP
 }
 
 interface PostHeaderDelegate {
@@ -20,17 +23,38 @@ interface PostHeaderDelegate {
 }
 
 interface CommentAdapterDelegate {
-    fun upVoteButtonClicked(postId: String)
-    fun downVoteButtonClicked(postId: String)
+    fun upVoteButtonClicked(comment: Comment)
+    fun downVoteButtonClicked(comment: Comment)
 }
 
 class PostDetailAdapter(private var post: Post?, private var comments: MutableList<Comment>, private val delegate: PostAdapterDelegate, private val headerDelegate: PostHeaderDelegate, private val commentDelegate: CommentAdapterDelegate): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    var sortby: Int = 0
+
     fun setComments(newComments: MutableList<Comment>) {
         this.comments = newComments
         this.notifyDataSetChanged()
     }
 
-    fun addToMeetups(newComments: List<Comment>) {
+    fun sortComments(sortBy: Int) {
+        when (sortBy) {
+            0 -> {
+                this.comments.sortWith(Comparator { o1, o2 ->
+                    o2.timestamp - o1.timestamp
+                })
+                this.sortby = 0
+                this.notifyDataSetChanged()
+            }
+            1 -> {
+                this.comments.sortWith(Comparator { o1, o2 ->
+                    o2.votes - o1.votes
+                })
+                this.sortby = 1
+                this.notifyDataSetChanged()
+            }
+        }
+    }
+
+    fun addToComments(newComments: List<Comment>) {
         val index = this.comments.size
         this.comments.addAll(newComments)
         this.notifyItemRangeInserted(index, newComments.size)
@@ -72,6 +96,7 @@ class PostDetailAdapter(private var post: Post?, private var comments: MutableLi
             1 -> {
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val cellForRow = layoutInflater.inflate(R.layout.post_header_row, parent, false)
+
                 return CommentHeaderViewHolder(cellForRow)
             }
             else -> {
@@ -93,6 +118,14 @@ class PostDetailAdapter(private var post: Post?, private var comments: MutableLi
             1 -> {
                 val viewHolder = p0 as CommentHeaderViewHolder
                 val sortByButton = viewHolder.view.findViewById<Button>(R.id.button_post_sortby)
+                when (sortby) {
+                    0 -> {
+                        sortByButton.setText("Sort By: {gmd-access-time}")
+                    }
+                    1 -> {
+                        sortByButton.setText("Sort By: {gmd-thumb-up}")
+                    }
+                }
                 sortByButton.setOnClickListener {
                     headerDelegate.sortByButtonClicked(SortBy.LATEST)
                 }
@@ -123,11 +156,11 @@ class PostDetailViewHolder(val view: View): RecyclerView.ViewHolder(view) {
         commentCountTextView.text = "{gmd-mode-comment} " + post.commentCount
 
         upVoteButton.setOnClickListener {
-            delegate.upVoteButtonClicked(post.postId)
+            delegate.upVoteButtonClicked(post)
         }
 
         downVoteButton.setOnClickListener {
-            delegate.downVoteButtonClicked(post.postId)
+            delegate.downVoteButtonClicked(post)
         }
     }
 }
@@ -142,16 +175,18 @@ class CommentViewHolder(val view: View): RecyclerView.ViewHolder(view) {
         val descriptionTextView = view.findViewById<TextView>(R.id.textView_comment_description)
         val upVoteButton = view.findViewById<Button>(R.id.button_comment_upvote)
         val downVoteButton = view.findViewById<Button>(R.id.button_comment_downvote)
+        val votesTextView = view.findViewById<TextView>(R.id.textView_comment_upvote_count)
 
         authorTextView.text = comment.authorName
         descriptionTextView.text = comment.comment
+        votesTextView.text = "{gmd-thumb-up} " + comment.votes
 
         upVoteButton.setOnClickListener {
-            delegate.upVoteButtonClicked(comment.postCommentId)
+            delegate.upVoteButtonClicked(comment)
         }
 
         downVoteButton.setOnClickListener {
-            delegate.downVoteButtonClicked(comment.postCommentId)
+            delegate.downVoteButtonClicked(comment)
         }
     }
 }

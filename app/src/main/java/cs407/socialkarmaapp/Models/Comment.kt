@@ -1,3 +1,21 @@
 package cs407.socialkarmaapp.Models
 
-class Comment(val postCommentId: String, val author: String, val authorName: String, val postId: String, val comment: String, val timestamp: Int, val votes: Int)
+class Comment() {
+    var postCommentId: String = ""
+    var author: String = ""
+    var authorName: String = ""
+    var postId: String = ""
+    var comment: String = ""
+    var timestamp: Int = 0
+    var votes: Int = 0
+
+    constructor(postCommentId: String, author: String, authorName: String, postId: String, comment: String, timestamp: Int, votes: Int) : this() {
+        this.postCommentId = postCommentId
+        this.author = author
+        this.authorName = authorName
+        this.postId = postId
+        this.comment = comment
+        this.timestamp = timestamp
+        this.votes = votes
+    }
+}

@@ -2,5 +2,6 @@
 <resources>
     <array name="sortByArray">
         <item>Time</item>
+        <item>Top</item>
     </array>
 </resources>

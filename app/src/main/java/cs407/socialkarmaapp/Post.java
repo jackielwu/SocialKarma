@@ -4,29 +4,29 @@ import java.io.Serializable;
 
 public class Post implements Serializable {
     private String postId;
-    private int upvoteCount, commentCount;
+    private int votes, commentCount;
     private String title, content, author, authorName;
     private int timestamp;
 
-    public Post(String postId, int upvoteCount, int commentCount, String title, String content, String author, int timestamp, String authorName) {
+    public Post() {}
+
+    public Post(String postId, int votes, int commentCount, String title, String content, String author, int timestamp, String authorName) {
         this.postId = postId;
         this.title = title;
         this.content = content;
         this.author = author;
         this.authorName = authorName;
-        this.upvoteCount = upvoteCount;
+        this.votes = votes;
         this.commentCount = commentCount;
         this.timestamp = timestamp;
     }
-    public Post() {
-        this.postId = "-LPu0HlkFJEMUzfezUCt"; // need to fix. it is uid of a@a.com
-    }
+
     public int getUpvoteCount() {
-        return upvoteCount;
+        return votes;
     }
 
     public String getup() {
-        return upvoteCount+"";
+        return votes+"";
     }
     public int getCommentCount() {
         return commentCount;
@@ -50,4 +50,8 @@ public class Post implements Serializable {
     public String getAuthorName() {
         return authorName;
     }
+    public int getTimestamp() { return timestamp; }
+    public int getVotes() { return votes; }
+    public void setVotes(int vote) {this.votes = vote; }
+    public void setPostId(String postId) {this.postId = postId;}
 }

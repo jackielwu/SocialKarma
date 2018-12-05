@@ -90,9 +90,11 @@ public class MeetupActivity extends Fragment {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+                if (response.code() >= 400) {
+                    return;
+                }
                 String body = response.body().string();
                 Gson gson = new GsonBuilder().create();
-
 
                 Meetup[] meetupsArray = gson.fromJson(body, Meetup[].class);
                 final List<Meetup> meetups = new ArrayList<Meetup>(Arrays.asList(meetupsArray));

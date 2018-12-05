@@ -36,24 +36,36 @@ import cs407.socialkarmaapp.Adapters.SortBy;
 import cs407.socialkarmaapp.Helpers.APIClient;
 import cs407.socialkarmaapp.Models.Comment;
 import cs407.socialkarmaapp.Models.Meetup;
+import cs407.socialkarmaapp.SortByDelegate;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class PostActivity extends AppCompatActivity {
+public class PostActivity extends AppCompatActivity implements SortByDelegate {
     private static class CommentSortByDialog extends DialogFragment {
+        private int selected = 0;
+        private SortByDelegate delegate;
+
+        public CommentSortByDialog(SortByDelegate delegate) {
+            this.delegate = delegate;
+        }
+
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle(R.string.title_sort_by)
                     .setItems(R.array.sortByArray, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            Toast.makeText(getActivity(), "" + which, Toast.LENGTH_SHORT).show();
+                            selected = which;
+                            delegate.sortByClicked(which);
                         }
                     });
             return builder.create();
         }
 
+        public int getSelected() {
+            return selected;
+        }
     }
     private Toolbar toolbar;
     private Post post;
@@ -77,6 +89,7 @@ public class PostActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        postDetailAdapter.setSortby(this.dialog.getSelected());
         setupDetails();
     }
 
@@ -100,6 +113,11 @@ public class PostActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void sortByClicked(int which) {
+        postDetailAdapter.sortComments(which);
+    }
+
     private void setupToolbar() {
         toolbar = findViewById(R.id.toolbar_post_detail);
         toolbar.setTitle(post.getTitle());
@@ -115,16 +133,68 @@ public class PostActivity extends AppCompatActivity {
     private void setupViews() {
         detailRecyclerView = findViewById(R.id.recyclerView_post_detail);
         detailRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        dialog = new CommentSortByDialog();
+        dialog = new CommentSortByDialog(this);
         postDetailAdapter = new PostDetailAdapter(post, new ArrayList<Comment>(), new PostAdapterDelegate() {
             @Override
-            public void upVoteButtonClicked(@NotNull String postId) {
+            public void upVoteButtonClicked(Post post) {
+                final Post p = post;
+                APIClient.INSTANCE.postPostVote(p.getPostId(), 1, new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(PostActivity.this, "Failed to upvote this post.", Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
+                        });
+                    }
 
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        if (response.code() >= 400) {
+                            return;
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                p.setVotes(p.getVotes() + 1);
+                                postDetailAdapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
+                });
             }
 
             @Override
-            public void downVoteButtonClicked(@NotNull String postId) {
+            public void downVoteButtonClicked(Post post) {
+                final Post p = post;
+                APIClient.INSTANCE.postPostVote(p.getPostId(), -1, new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(PostActivity.this, "Failed to downvote this post.", Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
+                        });
+                    }
 
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        if (response.code() >= 400) {
+                            return;
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                p.setVotes(p.getVotes() - 1);
+                                postDetailAdapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
+                });
             }
         }, new PostHeaderDelegate() {
             @Override
@@ -133,20 +203,72 @@ public class PostActivity extends AppCompatActivity {
             }
         }, new CommentAdapterDelegate() {
             @Override
-            public void upVoteButtonClicked(String postId) {
+            public void upVoteButtonClicked(Comment comment) {
+                final Comment c = comment;
+                APIClient.INSTANCE.postPostCommentVote(c.getPostCommentId(), 1, new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(PostActivity.this, "Failed to upvote this comment.", Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
+                        });
+                    }
 
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        if (response.code() >= 400) {
+                            return;
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                c.setVotes(c.getVotes() + 1);
+                                postDetailAdapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
+                });
             }
 
             @Override
-            public void downVoteButtonClicked(String postId) {
+            public void downVoteButtonClicked(Comment comment) {
+                final Comment c = comment;
+                APIClient.INSTANCE.postPostCommentVote(c.getPostCommentId(), -1, new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(PostActivity.this, "Failed to downvote this comment.", Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
+                        });
+                    }
 
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        if (response.code() >= 400) {
+                            return;
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                c.setVotes(c.getVotes() - 1);
+                                postDetailAdapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
+                });
             }
         });
         detailRecyclerView.setAdapter(postDetailAdapter);
     }
 
     private void setupDetails() {
-        APIClient.INSTANCE.getComments(this.post.getPostId(), new Callback() {
+        APIClient.INSTANCE.getComments(this.post.getPostId(), dialog.selected, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 runOnUiThread(new Runnable() {
