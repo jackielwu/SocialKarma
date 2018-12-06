@@ -83,7 +83,18 @@
         </activity>
         <activity
             android:name=".UserProfileActivity"
-            android:label="@string/title_activity_user_profile"></activity>
+            android:theme="@style/AppFullScreenTheme">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".BaseActivity" />
+        </activity>
+        <activity
+            android:name=".SearchActivity"
+            android:theme="@style/AppFullScreenTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".BaseActivity" /></activity>
     </application>
 
 </manifest>

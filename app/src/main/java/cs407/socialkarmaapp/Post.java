@@ -1,16 +1,18 @@
 package cs407.socialkarmaapp;
 
 import java.io.Serializable;
+import java.util.Map;
 
 public class Post implements Serializable {
     private String postId;
     private int votes, commentCount;
     private String title, content, author, authorName;
     private int timestamp;
+    private Map<String, Double> coordinates;
 
     public Post() {}
 
-    public Post(String postId, int votes, int commentCount, String title, String content, String author, int timestamp, String authorName) {
+    public Post(String postId, int votes, int commentCount, String title, String content, String author, int timestamp, String authorName, Map<String, Double> coordinates) {
         this.postId = postId;
         this.title = title;
         this.content = content;
@@ -19,6 +21,7 @@ public class Post implements Serializable {
         this.votes = votes;
         this.commentCount = commentCount;
         this.timestamp = timestamp;
+        this.coordinates = coordinates;
     }
 
     public int getUpvoteCount() {
@@ -50,6 +53,7 @@ public class Post implements Serializable {
     public String getAuthorName() {
         return authorName;
     }
+    public Map<String, Double> getCoordinates() { return coordinates; }
     public int getTimestamp() { return timestamp; }
     public int getVotes() { return votes; }
     public void setVotes(int vote) {this.votes = vote; }

@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Social Karma App</string>
     <string name="title_home">Home</string>
-    <string name="title_message">Message</string>
+    <string name="title_message">Messages</string>
     <string name="title_map">Map</string>
     <string name="title_profile">Profile</string>
     <string name="title_meetup">Meet Up</string>
@@ -104,4 +104,5 @@
     <string name="title_activity_chat_messages">ChatMessagesActivity</string>
     <string name="title_activity_messages">MessagesActivity</string>
     <string name="title_activity_user_profile">UserProfileActivity</string>
+    <string name="title_activity_search">SearchActivity</string>
 </resources>

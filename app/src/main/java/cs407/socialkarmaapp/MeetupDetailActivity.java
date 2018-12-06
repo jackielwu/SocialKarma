@@ -82,7 +82,7 @@ public class MeetupDetailActivity extends AppCompatActivity {
                     }
                 });
             }
-        });
+        }, this);
         detailRecyclerView.setAdapter(meetupDetailAdapter);
     }
 

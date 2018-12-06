@@ -9,7 +9,7 @@ import org.json.JSONObject
 import java.io.IOException
 
 object APIClient {
-    private const val baseURL = "http://10.0.2.2:8080"
+    private const val baseURL = "https://infinite-depths-67140.herokuapp.com"
 
     fun getGeolocation(location: Location, callback: Callback) {
         val url = baseURL + "/geo?lat=" + location.latitude + "&lng=" + location.longitude
@@ -18,8 +18,11 @@ object APIClient {
         client.newCall(request).enqueue(callback)
     }
 
-    fun getPosts(geoLocation: String, sortBy: Int, lastStartTime: Int?, callback: Callback) {
-        val url = baseURL + "/posts?geolocation=" + geoLocation + "&sortby=" + sortBy
+    fun getPosts(geoLocation: String, sortBy: Int, lastStartTime: Int?, showOnMap: Boolean, callback: Callback) {
+        var url = baseURL + "/posts?geolocation=" + geoLocation + "&sortby=" + sortBy
+        if (showOnMap != null && showOnMap) {
+            url += "&showOnMap=true"
+        }
         val request = Request.Builder().url(url).build()
         val client = OkHttpClient()
         client.newCall(request).enqueue(callback)
@@ -102,7 +105,7 @@ object APIClient {
         client.newCall(request).enqueue(callback)
     }
 
-    fun postNewPost(location: Location, title: String, description: String, callback: Callback) {
+    fun postNewPost(location: Location, title: String, description: String, showOnMap: Boolean, callback: Callback) {
         var url = baseURL + "/post"
         val json = JSONObject()
         json.put("title", title)
@@ -112,6 +115,7 @@ object APIClient {
         locationJson.put("lng", location.longitude)
         json.put("location", locationJson)
         json.put("author", FirebaseAuth.getInstance().currentUser?.uid)
+        json.put("showOnMap", showOnMap)
 
         val requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json.toString())
         val request = Request.Builder().url(url).post(requestBody).build()

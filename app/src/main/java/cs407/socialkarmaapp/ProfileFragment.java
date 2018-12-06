@@ -90,14 +90,14 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_profile, parent, false);
-        listView = view.findViewById(R.id.recyclerView_user_profile);
+        listView = view.findViewById(R.id.recyclerView_profile);
         listView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        karma = (TextView)view.findViewById(R.id.textView_user_profile_karmaPoints);
-        username = (TextView)view.findViewById(R.id.textView_user_profile_username);
+        karma = (TextView)view.findViewById(R.id.textView_profile_karmaPoints);
+        username = (TextView)view.findViewById(R.id.textView_profile_username);
         currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         uid = currentFirebaseUser.getUid();
         database = FirebaseDatabase.getInstance();
-        username.setText(currentFirebaseUser.getEmail());
+
         dialog = new SortByDialog(new SortByDelegate() {
             @Override
             public void sortByClicked(int which) {
@@ -117,6 +117,7 @@ public class ProfileFragment extends Fragment {
                 User user = dataSnapshot.getValue(User.class);
                 System.out.println(user.username);
                 karma.setText(("Karma: " + user.karma));
+                username.setText(user.username);
             }
 
             @Override
@@ -129,6 +130,12 @@ public class ProfileFragment extends Fragment {
         commentList = new ArrayList<>();
 
         commentAdapter = new CommentsAdapter(commentList, getActivity(), new CommentAdapterDelegate() {
+            @Override
+            public void deleteComment(@NotNull Comment comment, int atIndex) {
+                String commentId = comment.getPostCommentId();
+                // TODO
+            }
+
             @Override
             public void upVoteButtonClicked(Comment comment) {
                 final Comment c = comment;
@@ -193,8 +200,14 @@ public class ProfileFragment extends Fragment {
             public void sortByButtonClicked(@NotNull SortBy sortBy) {
                 dialog.show(getFragmentManager(), "commentDialog");
             }
-        });
+        }, true);
         postsAdapter = new PostsAdapter(list, getActivity(),new PostAdapterDelegate() {
+            @Override
+            public void deletePost(@NotNull Post post, int atIndex) {
+                String postId = post.getPostId();
+                //TODO
+            }
+
             @Override
             public void upVoteButtonClicked(Post post) {
                 final Post p = post;
@@ -259,7 +272,7 @@ public class ProfileFragment extends Fragment {
             public void sortByButtonClicked(@NotNull SortBy sortBy) {
                 dialog.show(getFragmentManager(), "postsDialog");
             }
-        });
+        }, false, true);
 
         querypost = database.getReference("posts").orderByChild("author").equalTo(uid);
 
@@ -271,7 +284,7 @@ public class ProfileFragment extends Fragment {
         final RadioRealButton button1 = (RadioRealButton) view.findViewById(R.id.btn_profile_posts);
         final RadioRealButton button2 = (RadioRealButton) view.findViewById(R.id.btn_profile_comments);
 
-        RadioRealButtonGroup group = (RadioRealButtonGroup) view.findViewById(R.id.user_profile_button_group);
+        RadioRealButtonGroup group = (RadioRealButtonGroup) view.findViewById(R.id.profile_button_group);
         group.setPosition(0);
 
         // onClickButton listener detects any click performed on buttons by touch
@@ -341,7 +354,6 @@ public class ProfileFragment extends Fragment {
                     Post post = snapshot.getValue(Post.class);
                     post.setPostId(snapshot.getKey());
                     list.add(post);
-
                 }
                 getActivity().runOnUiThread(new Runnable() {
                     @Override

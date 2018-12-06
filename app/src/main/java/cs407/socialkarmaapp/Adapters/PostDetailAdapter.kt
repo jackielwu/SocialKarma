@@ -1,5 +1,7 @@
 package cs407.socialkarmaapp.Adapters
 
+import android.content.Context
+import android.content.Intent
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +14,7 @@ import cs407.socialkarmaapp.Post
 import cs407.socialkarmaapp.R
 import cs407.socialkarmaapp.R.id.context
 import cs407.socialkarmaapp.R.id.sort
+import cs407.socialkarmaapp.UserProfileActivity
 import org.w3c.dom.Text
 
 enum class SortBy {
@@ -25,9 +28,10 @@ interface PostHeaderDelegate {
 interface CommentAdapterDelegate {
     fun upVoteButtonClicked(comment: Comment)
     fun downVoteButtonClicked(comment: Comment)
+    fun deleteComment(comment: Comment, atIndex: Int)
 }
 
-class PostDetailAdapter(private var post: Post?, private var comments: MutableList<Comment>, private val delegate: PostAdapterDelegate, private val headerDelegate: PostHeaderDelegate, private val commentDelegate: CommentAdapterDelegate): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class PostDetailAdapter(private var post: Post?, private var comments: MutableList<Comment>, private val delegate: PostAdapterDelegate, private val headerDelegate: PostHeaderDelegate, private val commentDelegate: CommentAdapterDelegate, private val context: Context, private val showDeleteCommentButton: Boolean): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var sortby: Int = 0
 
     fun setComments(newComments: MutableList<Comment>) {
@@ -112,7 +116,7 @@ class PostDetailAdapter(private var post: Post?, private var comments: MutableLi
             0 -> {
                 val viewHolder = p0 as PostDetailViewHolder
                 this.post?.let {
-                    viewHolder.setupView(it, delegate)
+                    viewHolder.setupView(it, delegate, context)
                 }
             }
             1 -> {
@@ -132,14 +136,14 @@ class PostDetailAdapter(private var post: Post?, private var comments: MutableLi
             }
             else -> {
                 val viewHolder = p0 as CommentViewHolder
-                viewHolder.setupView(comments[p1 - 2], commentDelegate)
+                viewHolder.setupView(comments[p1 - 2], p1 - 2, showDeleteCommentButton, commentDelegate, context)
             }
         }
     }
 }
 
 class PostDetailViewHolder(val view: View): RecyclerView.ViewHolder(view) {
-    fun setupView(post: Post, delegate: PostAdapterDelegate) {
+    fun setupView(post: Post, delegate: PostAdapterDelegate, context: Context) {
         val titleTextView = view.findViewById<TextView>(R.id.textView_post_title)
         val authorTextView = view.findViewById<TextView>(R.id.textView_post_author)
         val descriptionTextView = view.findViewById<TextView>(R.id.textView_comment_description)
@@ -154,6 +158,13 @@ class PostDetailViewHolder(val view: View): RecyclerView.ViewHolder(view) {
         descriptionTextView.text = post.content
         upVoteCountTextView.text = "{gmd-thumb-up} " + post.upvoteCount
         commentCountTextView.text = "{gmd-mode-comment} " + post.commentCount
+
+        authorTextView.setOnClickListener {
+            val intent = Intent(context, UserProfileActivity::class.java)
+            val userId = post.author
+            intent.putExtra(UserProfileActivity.EXTRA_USER_PROFILE_ID, userId)
+            context.startActivity(intent)
+        }
 
         upVoteButton.setOnClickListener {
             delegate.upVoteButtonClicked(post)
@@ -170,16 +181,24 @@ class CommentHeaderViewHolder(val view: View): RecyclerView.ViewHolder(view) {
 }
 
 class CommentViewHolder(val view: View): RecyclerView.ViewHolder(view) {
-    fun setupView(comment: Comment, delegate: CommentAdapterDelegate) {
+    fun setupView(comment: Comment, index: Int, showDeleteCommentButton: Boolean, delegate: CommentAdapterDelegate, context: Context) {
         val authorTextView = view.findViewById<TextView>(R.id.textView_comment_author)
         val descriptionTextView = view.findViewById<TextView>(R.id.textView_comment_description)
         val upVoteButton = view.findViewById<Button>(R.id.button_comment_upvote)
         val downVoteButton = view.findViewById<Button>(R.id.button_comment_downvote)
         val votesTextView = view.findViewById<TextView>(R.id.textView_comment_upvote_count)
+        val deleteButton = view.findViewById<Button>(R.id.button_comment_delete)
 
         authorTextView.text = comment.authorName
         descriptionTextView.text = comment.comment
         votesTextView.text = "{gmd-thumb-up} " + comment.votes
+
+        authorTextView.setOnClickListener {
+            val intent = Intent(context, UserProfileActivity::class.java)
+            val userId = comment.author
+            intent.putExtra(UserProfileActivity.EXTRA_USER_PROFILE_ID, userId)
+            context.startActivity(intent)
+        }
 
         upVoteButton.setOnClickListener {
             delegate.upVoteButtonClicked(comment)
@@ -187,6 +206,15 @@ class CommentViewHolder(val view: View): RecyclerView.ViewHolder(view) {
 
         downVoteButton.setOnClickListener {
             delegate.downVoteButtonClicked(comment)
+        }
+
+        if (showDeleteCommentButton) {
+            deleteButton.visibility = View.VISIBLE
+            deleteButton.setOnClickListener {
+                delegate.deleteComment(comment, index)
+            }
+        } else {
+            deleteButton.visibility = View.GONE
         }
     }
 }

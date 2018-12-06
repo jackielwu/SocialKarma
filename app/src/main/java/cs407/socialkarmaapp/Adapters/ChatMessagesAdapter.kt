@@ -13,7 +13,7 @@ import cs407.socialkarmaapp.Models.Chat
 import java.text.SimpleDateFormat
 import java.util.*
 
-class ChatMessagesAdapter(private var messages: MutableList<Message>, private var chat: Chat, private val context: Context): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ChatMessagesAdapter(private var messages: MutableList<Message>, private var chat: Chat?, private val context: Context): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     fun setMessages(newMessages: MutableList<Message>) {
         this.messages = newMessages
         this.notifyDataSetChanged()
@@ -80,7 +80,7 @@ class ChatMessagesAdapter(private var messages: MutableList<Message>, private va
 }
 
 class RightChatMessageViewHolder(val view: View): RecyclerView.ViewHolder(view) {
-    fun setupView(messages: List<Message>, chat: Chat, index: Int) {
+    fun setupView(messages: List<Message>, chat: Chat?, index: Int) {
         val message = messages.get(index)
         val messageTextView = view.findViewById<TextView>(R.id.textView_message_row_right)
         val messageTimeTextView = view.findViewById<TextView>(R.id.textView_message_row_right_timestamp)
@@ -92,7 +92,7 @@ class RightChatMessageViewHolder(val view: View): RecyclerView.ViewHolder(view) 
 
         val readReceiptTextView = view.findViewById<TextView>(R.id.textView_message_read_receipt)
         if (index == messages.size - 1) {
-            if (chat.isReadReceipt) {
+            if (if (chat != null) chat.isReadReceipt else false) {
                 readReceiptTextView.visibility = View.VISIBLE
             } else {
                 readReceiptTextView.visibility = View.GONE

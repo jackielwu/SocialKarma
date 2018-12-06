@@ -8,7 +8,7 @@
 
 
     <TextView
-        android:id="@+id/textView_user_profile_username"
+        android:id="@+id/textView_profile_username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -16,7 +16,7 @@
         android:layout_marginStart="8dp"
         android:text="Name"
         android:textAlignment="center"
-        app:layout_constraintBottom_toTopOf="@+id/textView_user_profile_karmaPoints"
+        app:layout_constraintBottom_toTopOf="@+id/textView_profile_karmaPoints"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -31,11 +31,11 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="4dp"
         android:text="Change Password"
-        app:layout_constraintBottom_toTopOf="@+id/user_profile_button_group"
+        app:layout_constraintBottom_toTopOf="@+id/profile_button_group"
         app:layout_constraintEnd_toStartOf="@+id/btn_DeleteAccount"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_user_profile_karmaPoints"
+        app:layout_constraintTop_toBottomOf="@+id/textView_profile_karmaPoints"
         app:layout_constraintVertical_bias="0.0" />
 
     <Button
@@ -45,7 +45,7 @@
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:text="Delete Account"
-        app:layout_constraintBottom_toTopOf="@+id/user_profile_button_group"
+        app:layout_constraintBottom_toTopOf="@+id/profile_button_group"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/btn_Changepw"
@@ -53,7 +53,7 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
-        android:id="@+id/textView_user_profile_karmaPoints"
+        android:id="@+id/textView_profile_karmaPoints"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -65,15 +65,14 @@
         app:layout_constraintBottom_toTopOf="@id/btn_Changepw"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_user_profile_username"
+        app:layout_constraintTop_toBottomOf="@+id/textView_profile_username"
         app:layout_constraintVertical_bias="0.0" />
 
     <co.ceryle.radiorealbutton.RadioRealButtonGroup
-        android:id="@+id/user_profile_button_group"
+        android:id="@+id/profile_button_group"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerView_user_profile"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -113,12 +112,12 @@
     </co.ceryle.radiorealbutton.RadioRealButtonGroup>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerView_user_profile"
+        android:id="@+id/recyclerView_profile"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/user_profile_button_group" />
+        app:layout_constraintTop_toBottomOf="@+id/profile_button_group" />
 
 </android.support.constraint.ConstraintLayout>

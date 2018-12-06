@@ -24,8 +24,19 @@ class ChatsAdapter(private var chats: MutableList<Chat>, private val context: Co
         this.notifyItemRangeInserted(index, newChats.size)
     }
 
+    fun addChat(newChat: Chat) {
+        val index = this.chats.size
+        this.chats.add(newChat)
+        this.notifyItemRangeInserted(index, 1)
+    }
+
     fun setChat(index: Int) {
         this.notifyItemRangeChanged(index, 1)
+    }
+
+    fun removeChats() {
+        this.chats.clear()
+        this.notifyDataSetChanged()
     }
 
     override fun getItemCount(): Int {
@@ -51,7 +62,6 @@ class ChatViewHolder(val view: View): RecyclerView.ViewHolder(view) {
         val messageTextView = view.findViewById<TextView>(R.id.textView_message_content)
         val timeTextView = view.findViewById<TextView>(R.id.textView_message_time)
 
-        nameTextView.text = ""
         chat.partner?.username.let {
             nameTextView.text = chat.partner?.username
         }

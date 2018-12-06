@@ -3,6 +3,7 @@ package cs407.socialkarmaapp;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -41,6 +42,7 @@ public class MessagesFragment extends Fragment {
     //the listview
     RecyclerView recyclerView;
     ChatsAdapter chatsAdapter;
+    SwipeRefreshLayout refreshLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
@@ -50,6 +52,14 @@ public class MessagesFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         chatsAdapter = new ChatsAdapter(new ArrayList<Chat>(), getActivity());
         recyclerView.setAdapter(chatsAdapter);
+        refreshLayout = view.findViewById(R.id.swipeRefreshLayout_messages);
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getChats();
+                refreshLayout.setRefreshing(false);
+            }
+        });
 
         return view;
     }

@@ -35,6 +35,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,7 +45,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ChatMessagesActivity extends Activity {
+    public static final String EXTRA_CHAT_MESSAGE_PARTNER = "cs407.socialkarmaapp.EXTRA_CHAT_MESSAGE_PARTNER";
+
     private Toolbar toolbar;
+    private User partner;
     private String partnerId;
     private String partnerName;
     private String chatId;
@@ -68,6 +74,7 @@ public class ChatMessagesActivity extends Activity {
         partnerName = intent.getStringExtra(MessagesFragment.EXTRA_MESSAGE_PARTNER_NAME);
         chatId = intent.getStringExtra(MessagesFragment.EXTRA_CHAT_ID);
         chat = (Chat)intent.getSerializableExtra(MessagesFragment.EXTRA_CHAT_OBJECT);
+        partner = (User)intent.getSerializableExtra(ChatMessagesActivity.EXTRA_CHAT_MESSAGE_PARTNER);
 
         setupToolbar();
         setupViews();
@@ -78,8 +85,17 @@ public class ChatMessagesActivity extends Activity {
         super.onResume();
 
         recyclerView.scrollToPosition(chatMessagesAdapter.getItemCount() - 1);
-        setChatReadReceipt();
-        setupChatMessages();
+        FirebaseUser currUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currUser != null) {
+            if (chatId != null) {
+                setupChatMessages();
+            } else if (partner != null && partner.chatMembers.get(currUser.getUid()) != null) {
+                chatId = partner.chatMembers.get(currUser.getUid());
+                setupChatMessages();
+            }
+        } else {
+            finish();
+        }
     }
 
     @Override
@@ -136,25 +152,59 @@ public class ChatMessagesActivity extends Activity {
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                APIClient.INSTANCE.postMessage(chatId, messageEditText.getText().toString(), new Callback() {
-                    @Override
-                    public void onFailure(Call call, IOException e) {
-                        Toast.makeText(ChatMessagesActivity.this, "Failed to send message.", Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-                        if (response.code() >= 400) {
-                            Toast.makeText(ChatMessagesActivity.this, "Failed to send message.", Toast.LENGTH_SHORT).show();
-                        }
-                        runOnUiThread(new Runnable() {
+                final FirebaseUser currUser = FirebaseAuth.getInstance().getCurrentUser();
+                if (currUser != null) {
+                    if (partner.chatMembers.get(currUser.getUid()) != null) {
+                        APIClient.INSTANCE.postMessage(chatId, messageEditText.getText().toString(), new Callback() {
                             @Override
-                            public void run() {
-                                messageEditText.setText("");
+                            public void onFailure(Call call, IOException e) {
+                                Toast.makeText(ChatMessagesActivity.this, "Failed to send message.", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onResponse(Call call, Response response) throws IOException {
+                                if (response.code() >= 400) {
+                                    Toast.makeText(ChatMessagesActivity.this, "Failed to send message.", Toast.LENGTH_SHORT).show();
+                                }
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        messageEditText.setText("");
+                                    }
+                                });
+                            }
+                        });
+                    } else {
+                        APIClient.INSTANCE.postChat(partnerId, messageEditText.getText().toString(), new Callback() {
+                            @Override
+                            public void onFailure(Call call, IOException e) {
+                                Toast.makeText(ChatMessagesActivity.this, "Failed to send message.", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onResponse(Call call, Response response) throws IOException {
+                                if (response.code() >= 400) {
+                                    Toast.makeText(ChatMessagesActivity.this, "Failed to send message.", Toast.LENGTH_SHORT).show();
+                                }
+
+                                String body = response.body().string();
+                                Gson gson = new GsonBuilder().create();
+
+                                Chat newChat = gson.fromJson(body, Chat.class);
+                                chat = newChat;
+                                chatId = newChat.getChatId();
+                                partner.chatMembers.put(currUser.getUid(), chatId);
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        messageEditText.setText("");
+                                        setupChatMessages();
+                                    }
+                                });
                             }
                         });
                     }
-                });
+                }
             }
         });
     }
@@ -162,6 +212,19 @@ public class ChatMessagesActivity extends Activity {
     private void setupChatMessages() {
         chatRef = FirebaseDatabase.getInstance().getReference("chats").child(chatId);
         messagesRef = FirebaseDatabase.getInstance().getReference("messages").child(chatId);
+
+        if (chat == null) {
+            chatRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    chat = dataSnapshot.getValue(Chat.class);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                }
+            });
+        }
 
         ChildEventListener chatsChildEventListener = new ChildEventListener() {
             @Override

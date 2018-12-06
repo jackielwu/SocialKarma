@@ -27,14 +27,30 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import cs407.socialkarmaapp.Helpers.APIClient;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
     private GoogleMap mMap;
 
     private static final String TAG = MapFragment.class.getSimpleName();
     private MapView mapView;
-//    Criteria criteria;
-//    LocationManager locationManager;
+    Criteria criteria;
+    LocationManager locationManager;
+    List<Post> posts;
 //    Location location;
 //    LatLng myLatLng;
     @Override
@@ -51,7 +67,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         mapView.onCreate(savedInstanceState);
         mapView.onResume();
         mapView.getMapAsync(this);
-
     }
 
     /**
@@ -66,9 +81,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             Log.e("","permission granted");
             mMap.setMyLocationEnabled(true);
         }
-        LocationManager locationManager = (LocationManager)
+        locationManager = (LocationManager)
                 getActivity().getSystemService(Context.LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
+        criteria = new Criteria();
 
         Location location = locationManager.getLastKnownLocation(locationManager
                 .getBestProvider(criteria, false));
@@ -83,7 +98,53 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLatLng,15));
 
+        getPosts();
         //mMap.moveCamera(CameraUpdateFactory.newLatLng(myLatLng));
     }
 
+    private void getPosts() {
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            mMap.setMyLocationEnabled(true);
+        }
+        Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+        if (location != null) {
+            APIClient.INSTANCE.getGeolocation(location, new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    System.out.println("Could not get a geolocation.");
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    String body = response.body().string();
+                    Gson gson = new GsonBuilder().create();
+
+                    Map<String, String> map = new HashMap<String, String>();
+                    map = (Map<String, String>)gson.fromJson(body, map.getClass());
+                    String geolocation = map.get("geo");
+
+                    if (geolocation != null) {
+                        APIClient.INSTANCE.getPosts(geolocation, 0, null, true, new Callback() {
+                            @Override
+                            public void onFailure(Call call, IOException e) {
+                                System.out.println("Could not get posts.");
+                            }
+
+                            @Override
+                            public void onResponse(Call call, Response response) throws IOException {
+                                String body = response.body().string();
+                                Gson gson = new GsonBuilder().create();
+
+                                Post[] postsArray = gson.fromJson(body, Post[].class);
+                                final List<Post> posts= new ArrayList<Post>(Arrays.asList(postsArray));
+                                MapFragment.this.posts = posts;
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+    }
 }
