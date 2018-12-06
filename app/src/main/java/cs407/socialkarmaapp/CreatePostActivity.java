@@ -87,7 +87,7 @@ public class CreatePostActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Location location) {
                         if (location != null) {
-                            APIClient.INSTANCE.postNewPost(location, postTitleEditText.getText().toString(), postDescriptionEditText.getText().toString(), showOnMapRadioButton.isSelected(), new Callback() {
+                            APIClient.INSTANCE.postNewPost(location, postTitleEditText.getText().toString(), postDescriptionEditText.getText().toString(), showOnMapRadioButton.isChecked(), new Callback() {
                                 @Override
                                 public void onFailure(Call call, IOException e) {
                                     runOnUiThread(new Runnable() {
