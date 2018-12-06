@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -43,10 +44,11 @@ import okhttp3.Response;
 
 public class PostActivity extends AppCompatActivity implements SortByDelegate {
     private static class CommentSortByDialog extends DialogFragment {
-        private int selected = 0;
+        private int selected;
         private SortByDelegate delegate;
 
         public CommentSortByDialog(SortByDelegate delegate) {
+            selected = 0;
             this.delegate = delegate;
         }
 
@@ -73,6 +75,8 @@ public class PostActivity extends AppCompatActivity implements SortByDelegate {
     private RecyclerView detailRecyclerView;
     private PostDetailAdapter postDetailAdapter;
     private CommentSortByDialog dialog;
+
+    private SwipeRefreshLayout refreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,8 +137,19 @@ public class PostActivity extends AppCompatActivity implements SortByDelegate {
     private void setupViews() {
         detailRecyclerView = findViewById(R.id.recyclerView_post_detail);
         detailRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        refreshLayout = findViewById(R.id.swipeRefreshLayout_post_detail);
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                setupDetails();
+                refreshLayout.setRefreshing(false);
+            }
+        });
         dialog = new CommentSortByDialog(this);
         postDetailAdapter = new PostDetailAdapter(post, new ArrayList<Comment>(), new PostAdapterDelegate() {
+            @Override
+            public void deletePost(@NotNull Post post, int atIndex) {}
+
             @Override
             public void upVoteButtonClicked(Post post) {
                 final Post p = post;
@@ -203,6 +218,9 @@ public class PostActivity extends AppCompatActivity implements SortByDelegate {
             }
         }, new CommentAdapterDelegate() {
             @Override
+            public void deleteComment(@NotNull Comment comment, int atIndex) {}
+
+            @Override
             public void upVoteButtonClicked(Comment comment) {
                 final Comment c = comment;
                 APIClient.INSTANCE.postPostCommentVote(c.getPostCommentId(), 1, new Callback() {
@@ -263,7 +281,7 @@ public class PostActivity extends AppCompatActivity implements SortByDelegate {
                     }
                 });
             }
-        });
+        }, this, false);
         detailRecyclerView.setAdapter(postDetailAdapter);
     }
 

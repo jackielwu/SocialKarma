@@ -11,6 +11,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -63,10 +64,11 @@ interface SortByDelegate {
 public class PostsFragment extends Fragment implements SortByDelegate {
 
     private static class PostSortByDialog extends DialogFragment {
-        private int selected = 0;
+        private int selected;
         private SortByDelegate delegate;
 
         public PostSortByDialog(SortByDelegate delegate) {
+            selected = 0;
             this.delegate = delegate;
         }
 
@@ -93,6 +95,7 @@ public class PostsFragment extends Fragment implements SortByDelegate {
 
     List<Post> list;
     RecyclerView recyclerView;
+    SwipeRefreshLayout refreshLayout;
     PostsAdapter adapter;
     PostSortByDialog dialog;
 
@@ -109,6 +112,9 @@ public class PostsFragment extends Fragment implements SortByDelegate {
 
         //creating the adapter
         adapter = new PostsAdapter(list, getActivity(), new PostAdapterDelegate() {
+            @Override
+            public void deletePost(@NotNull Post post, int atIndex) {}
+
             @Override
             public void upVoteButtonClicked(Post post) {
                 final Post p = post;
@@ -173,12 +179,21 @@ public class PostsFragment extends Fragment implements SortByDelegate {
             public void sortByButtonClicked(@NotNull SortBy sortBy) {
                 dialog.show(getFragmentManager(), "showSortByDialog");
             }
-        });
+        }, true, false);
 
         //attaching adapter to the listview
         recyclerView.setAdapter(adapter);
         dialog = new PostSortByDialog(this);
         mFusedLocationClient = getFusedLocationProviderClient(getActivity());
+
+        refreshLayout = view.findViewById(R.id.swipeRefreshLayout_posts);
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getPosts();
+                refreshLayout.setRefreshing(false);
+            }
+        });
         return view;
     }
 
@@ -231,7 +246,7 @@ public class PostsFragment extends Fragment implements SortByDelegate {
                             String geolocation = map.get("geo");
 
                             if (geolocation != null) {
-                                APIClient.INSTANCE.getPosts(geolocation, dialog.getSelected(), null, new Callback() {
+                                APIClient.INSTANCE.getPosts(geolocation, dialog.getSelected(), null, false, new Callback() {
                                     @Override
                                     public void onFailure(Call call, IOException e) {
                                         System.out.println("Could not get posts.");

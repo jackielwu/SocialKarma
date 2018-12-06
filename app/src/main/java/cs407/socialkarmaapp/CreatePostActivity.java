@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.Toast;
 import android.support.v7.widget.Toolbar;
 
@@ -30,6 +31,7 @@ public class CreatePostActivity extends AppCompatActivity {
     private EditText postTitleEditText;
     private EditText postDescriptionEditText;
     private Button submitPostButton;
+    private RadioButton showOnMapRadioButton;
 
     private FusedLocationProviderClient mFusedLocationProviderClient;
 
@@ -46,6 +48,7 @@ public class CreatePostActivity extends AppCompatActivity {
         postTitleEditText = findViewById(R.id.editText_post_title);
         postDescriptionEditText = findViewById(R.id.editText_post_description);
         submitPostButton = findViewById(R.id.button_submit_post);
+        showOnMapRadioButton = findViewById(R.id.radioButton_show_on_map);
         setupViews();
     }
 
@@ -84,7 +87,7 @@ public class CreatePostActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Location location) {
                         if (location != null) {
-                            APIClient.INSTANCE.postNewPost(location, postTitleEditText.getText().toString(), postDescriptionEditText.getText().toString(), new Callback() {
+                            APIClient.INSTANCE.postNewPost(location, postTitleEditText.getText().toString(), postDescriptionEditText.getText().toString(), showOnMapRadioButton.isSelected(), new Callback() {
                                 @Override
                                 public void onFailure(Call call, IOException e) {
                                     runOnUiThread(new Runnable() {

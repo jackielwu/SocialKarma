@@ -1,5 +1,6 @@
 package cs407.socialkarmaapp.Adapters
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.support.v7.widget.RecyclerView
@@ -10,11 +11,12 @@ import android.widget.Button
 import android.widget.TextView
 import cs407.socialkarmaapp.Models.Meetup
 import cs407.socialkarmaapp.R
+import cs407.socialkarmaapp.UserProfileActivity
 import org.w3c.dom.Text
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MeetupDetailAdapter(private var meetup: Meetup?, private val delegate: MeetupDelegate): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class MeetupDetailAdapter(private var meetup: Meetup?, private val delegate: MeetupDelegate, private val context: Context): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     fun setMeetup(newMeetup: Meetup) {
         this.meetup = newMeetup
         this.notifyDataSetChanged()
@@ -63,7 +65,7 @@ class MeetupDetailAdapter(private var meetup: Meetup?, private val delegate: Mee
             0 -> {
                 val viewHolder = p0 as MeetupDetailViewHolder
                 this.meetup?.let {
-                    viewHolder.setupView(it, delegate)
+                    viewHolder.setupView(it, delegate, context)
                 }
             }
             else -> {
@@ -81,7 +83,7 @@ class MeetupDetailAdapter(private var meetup: Meetup?, private val delegate: Mee
 }
 
 class MeetupDetailViewHolder(val view: View): RecyclerView.ViewHolder(view) {
-    fun setupView(meetup: Meetup, delegate: MeetupDelegate) {
+    fun setupView(meetup: Meetup, delegate: MeetupDelegate, context: Context) {
         val titleTextView = view.findViewById<TextView>(R.id.textView_title)
         val organizerTextView = view.findViewById<TextView>(R.id.textView_organizer)
         val descriptionTextView = view.findViewById<TextView>(R.id.textView_description)
@@ -107,6 +109,13 @@ class MeetupDetailViewHolder(val view: View): RecyclerView.ViewHolder(view) {
             locationTextView.text = "Where:\n" + meetup.location.name
         } else {
             locationTextView.visibility = View.GONE
+        }
+
+        organizerTextView.setOnClickListener {
+            val intent = Intent(context, UserProfileActivity::class.java)
+            val userId = meetup.organizer
+            intent.putExtra(UserProfileActivity.EXTRA_USER_PROFILE_ID, userId)
+            context.startActivity(intent)
         }
 
         timesTextView.visibility = View.VISIBLE

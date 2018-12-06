@@ -5,7 +5,7 @@
         android:id="@+id/action_signout"
         android:orderInCategory="300"
         android:title="User"
-        android:icon="@drawable/back_arrow"
+        android:icon="@drawable/logout"
         app:showAsAction="ifRoom"></item>
 
 </menu>

@@ -1,91 +1,126 @@
 package cs407.socialkarmaapp;
 
 import android.os.Bundle;
-import android.support.design.widget.BottomNavigationView;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import co.intentservice.chatui.ChatView;
-import co.intentservice.chatui.models.ChatMessage;
+import cs407.socialkarmaapp.Adapters.ChatsAdapter;
+import cs407.socialkarmaapp.Helpers.APIClient;
+import cs407.socialkarmaapp.Models.Chat;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class MessagesFragment extends Fragment {
+    public static final String EXTRA_MESSAGE_PARTNER = "cs407.socialkarmaapp.MESSAGE_PARTNER";
+    public static final String EXTRA_MESSAGE_PARTNER_NAME = "cs407.socialkarmaapp.MESSAGE_PARTNER_NAME";
+    public static final String EXTRA_CHAT_ID = "cs407.socialkarmaapp.EXTRA_CHAT_ID";
+    public static final String EXTRA_CHAT_OBJECT = "cs407.socialkarmaapp.EXTRA_CHAT_OBJECT";
 
     private TextView mTextMessage;
 
-    List<message_item> messageList;
     //the listview
-    ListView listView;
+    RecyclerView recyclerView;
+    ChatsAdapter chatsAdapter;
+    SwipeRefreshLayout refreshLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_chat, parent, false);
-        mTextMessage = (TextView) view.findViewById(R.id.message);
 
-        messageList = new ArrayList<>();
-
-        listView = (ListView) view.findViewById(R.id.message_list);
-        messageList.add(new message_item("12:30","Ryan Java", "A message with a sender name"));
-
-        MyMessageAdapter adapter = new MyMessageAdapter(getActivity(), R.layout.chat_item, messageList);
-
-        listView.setAdapter(adapter);
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Object o = listView.getItemAtPosition(position);
-//                openChat();
+        recyclerView = view.findViewById(R.id.recyclerView_chats);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        chatsAdapter = new ChatsAdapter(new ArrayList<Chat>(), getActivity());
+        recyclerView.setAdapter(chatsAdapter);
+        refreshLayout = view.findViewById(R.id.swipeRefreshLayout_messages);
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getChats();
+                refreshLayout.setRefreshing(false);
             }
         });
+
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        getChats();
+    }
 
-//    public void openChat(){
-//        setContentView(R.layout.activity_individual_chat);
-//        Button back = (Button)findViewById(R.id.chat_back);
-//
-//        back.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//                openChatList();
-//            }
-//        });
-//        ChatView chatView = (ChatView) findViewById(R.id.chat_view);
-//        chatView.addMessage(new ChatMessage("Message received", System.currentTimeMillis(), ChatMessage.Type.RECEIVED));
-//        chatView.addMessage(new ChatMessage("A message with a sender name",
-//                System.currentTimeMillis(), ChatMessage.Type.RECEIVED, "Ryan Java"));
-//        chatView.setOnSentMessageListener(new ChatView.OnSentMessageListener() {
-//            @Override
-//            public boolean sendMessage(ChatMessage chatMessage) {
-//                //need to implement storing to database
-//
-//                return true;
-//            }
-//        });
-//
-//        chatView.setTypingListener(new ChatView.TypingListener() {
-//            @Override
-//            public void userStartedTyping() {
-//
-//            }
-//
-//            @Override
-//            public void userStoppedTyping() {
-//
-//            }
-//        });
-//    }
+    private void getChats() {
+        APIClient.INSTANCE.getChats(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getContext(), "Failed to retrieve conversations.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.code() >= 400) {
+                    return;
+                }
+                String body = response.body().string();
+                Gson gson = new GsonBuilder().create();
+
+                Chat[] chatsArray = gson.fromJson(body, Chat[].class);
+                final List<Chat> chats = new ArrayList<>(Arrays.asList(chatsArray));
+                int index = 0;
+                for (final Chat chat: chats) {
+                    final int tempIndex = index;
+                    FirebaseDatabase.getInstance().getReference("users").child(chat.getPartnerId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            chat.setPartner(dataSnapshot.getValue(User.class));
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    chatsAdapter.setChat(tempIndex);
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                        }
+                    });
+                    index++;
+                }
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        chatsAdapter.setChats(chats);
+                    }
+                });
+            }
+        });
+    }
 }
+

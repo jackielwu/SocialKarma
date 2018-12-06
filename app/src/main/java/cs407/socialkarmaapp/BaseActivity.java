@@ -1,5 +1,6 @@
 package cs407.socialkarmaapp;
 
+import android.app.SearchableInfo;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -142,6 +143,10 @@ public class BaseActivity extends AppCompatActivity {
         } else if (id == R.id.action_signout) {
             FirebaseAuth.getInstance().signOut();
             launchMainActivity(this);
+        } else if (id == R.id.action_add_message) {
+            Intent intent = new Intent(this, SearchActivity.class);
+            intent.putExtra(SearchActivity.EXTRA_RESULT_TYPE, 1);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }

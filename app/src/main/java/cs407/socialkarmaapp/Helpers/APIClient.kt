@@ -9,7 +9,7 @@ import org.json.JSONObject
 import java.io.IOException
 
 object APIClient {
-    private const val baseURL = "http://10.0.2.2:8080"
+    private const val baseURL = "https://infinite-depths-67140.herokuapp.com"
 
     fun getGeolocation(location: Location, callback: Callback) {
         val url = baseURL + "/geo?lat=" + location.latitude + "&lng=" + location.longitude
@@ -18,8 +18,11 @@ object APIClient {
         client.newCall(request).enqueue(callback)
     }
 
-    fun getPosts(geoLocation: String, sortBy: Int, lastStartTime: Int?, callback: Callback) {
-        val url = baseURL + "/posts?geolocation=" + geoLocation + "&sortby=" + sortBy
+    fun getPosts(geoLocation: String, sortBy: Int, lastStartTime: Int?, showOnMap: Boolean, callback: Callback) {
+        var url = baseURL + "/posts?geolocation=" + geoLocation + "&sortby=" + sortBy
+        if (showOnMap != null && showOnMap) {
+            url += "&showOnMap=true"
+        }
         val request = Request.Builder().url(url).build()
         val client = OkHttpClient()
         client.newCall(request).enqueue(callback)
@@ -42,6 +45,25 @@ object APIClient {
 
     fun getMeetupDetail(meetupId: String, callback: Callback) {
         var url = baseURL + "/meetup/" + meetupId + "?userId=" + FirebaseAuth.getInstance().currentUser?.uid
+        val request = Request.Builder().url(url).build()
+        val client = OkHttpClient()
+        client.newCall(request).enqueue(callback)
+    }
+
+    fun getComments(postId: String, sortBy: Int, callback: Callback) {
+        var url = baseURL + "/post/comments"
+        val json = JSONObject()
+        json.put("postId", postId)
+        json.put("sortby", sortBy)
+
+        val requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json.toString())
+        val request = Request.Builder().url(url).post(requestBody).build()
+        val client = OkHttpClient()
+        client.newCall(request).enqueue(callback)
+    }
+
+    fun getChats(callback: Callback) {
+        var url = baseURL + "/messages?userId=" + FirebaseAuth.getInstance().currentUser?.uid
         val request = Request.Builder().url(url).build()
         val client = OkHttpClient()
         client.newCall(request).enqueue(callback)
@@ -83,7 +105,7 @@ object APIClient {
         client.newCall(request).enqueue(callback)
     }
 
-    fun postNewPost(location: Location, title: String, description: String, callback: Callback) {
+    fun postNewPost(location: Location, title: String, description: String, showOnMap: Boolean, callback: Callback) {
         var url = baseURL + "/post"
         val json = JSONObject()
         json.put("title", title)
@@ -93,18 +115,7 @@ object APIClient {
         locationJson.put("lng", location.longitude)
         json.put("location", locationJson)
         json.put("author", FirebaseAuth.getInstance().currentUser?.uid)
-
-        val requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json.toString())
-        val request = Request.Builder().url(url).post(requestBody).build()
-        val client = OkHttpClient()
-        client.newCall(request).enqueue(callback)
-    }
-
-    fun getComments(postId: String, sortBy: Int, callback: Callback) {
-        var url = baseURL + "/post/comments"
-        val json = JSONObject()
-        json.put("postId", postId)
-        json.put("sortby", sortBy)
+        json.put("showOnMap", showOnMap)
 
         val requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json.toString())
         val request = Request.Builder().url(url).post(requestBody).build()
@@ -144,6 +155,32 @@ object APIClient {
         json.put("userId", FirebaseAuth.getInstance().currentUser?.uid)
         json.put("postCommentId", postCommentId)
         json.put("vote", vote)
+
+        val requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json.toString())
+        val request = Request.Builder().url(url).post(requestBody).build()
+        val client = OkHttpClient()
+        client.newCall(request).enqueue(callback)
+    }
+
+    fun postChat(partnerId: String, message: String, callback: Callback) {
+        var url = baseURL + "/chat"
+        var json = JSONObject()
+        json.put("userId", FirebaseAuth.getInstance().currentUser?.uid)
+        json.put("partnerId", partnerId)
+        json.put("message", message)
+
+        val requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json.toString())
+        val request = Request.Builder().url(url).post(requestBody).build()
+        val client = OkHttpClient()
+        client.newCall(request).enqueue(callback)
+    }
+
+    fun postMessage(chatId: String, message: String, callback: Callback) {
+        var url = baseURL + "/message"
+        var json = JSONObject()
+        json.put("chatId", chatId)
+        json.put("userId", FirebaseAuth.getInstance().currentUser?.uid)
+        json.put("message", message)
 
         val requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json.toString())
         val request = Request.Builder().url(url).post(requestBody).build()

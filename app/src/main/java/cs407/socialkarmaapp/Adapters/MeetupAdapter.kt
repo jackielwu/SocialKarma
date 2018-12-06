@@ -11,10 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import cs407.socialkarmaapp.BaseActivity
-import cs407.socialkarmaapp.MeetupActivity
-import cs407.socialkarmaapp.MeetupDetailActivity
-import cs407.socialkarmaapp.R
+import cs407.socialkarmaapp.*
 import cs407.socialkarmaapp.Models.*
 import org.w3c.dom.Text
 
@@ -45,13 +42,13 @@ class MeetupAdapter(private var meetups: MutableList<Meetup>, private val contex
     }
 
     override fun onBindViewHolder(p0: MeetupViewHolder, p1: Int) {
-        p0.setupView(meetups, p1, delegate)
+        p0.setupView(meetups, p1, delegate, context)
         p0.didSelectRow(meetups, p1, context)
     }
 }
 
 class MeetupViewHolder(val view: View): RecyclerView.ViewHolder(view) {
-    fun setupView(meetups: List<Meetup>, index: Int, delegate: MeetupDelegate) {
+    fun setupView(meetups: List<Meetup>, index: Int, delegate: MeetupDelegate, context: Context) {
         val meetup = meetups.get(index)
         val titleTextView = view.findViewById<TextView>(R.id.textView_title)
         val organizerTextView = view.findViewById<TextView>(R.id.textView_organizer)
@@ -74,6 +71,13 @@ class MeetupViewHolder(val view: View): RecyclerView.ViewHolder(view) {
         } else {
             rsvpButton.text = "RSVP"
             rsvpButton.isEnabled = true
+        }
+
+        organizerTextView.setOnClickListener {
+            val intent = Intent(context, UserProfileActivity::class.java)
+            val userId = meetup.organizer
+            intent.putExtra(UserProfileActivity.EXTRA_USER_PROFILE_ID, userId)
+            context.startActivity(intent)
         }
 
         locationTextView.visibility = View.GONE

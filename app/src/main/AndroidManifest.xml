@@ -16,6 +16,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
@@ -63,12 +67,34 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".BaseActivity" />
         </activity>
-        <activity android:name=".CreateCommentActivity"
+        <activity
+            android:name=".CreateCommentActivity"
             android:theme="@style/AppFullScreenTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".PostActivity" />
         </activity>
+        <activity
+            android:name=".ChatMessagesActivity"
+            android:theme="@style/AppFullScreenTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".BaseActivity" />
+        </activity>
+        <activity
+            android:name=".UserProfileActivity"
+            android:theme="@style/AppFullScreenTheme">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".BaseActivity" />
+        </activity>
+        <activity
+            android:name=".SearchActivity"
+            android:theme="@style/AppFullScreenTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".BaseActivity" /></activity>
     </application>
 
 </manifest>

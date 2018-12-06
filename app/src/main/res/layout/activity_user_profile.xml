@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/WhiteSmoke"
+    tools:context=".UserProfileActivity">
+
+    <TextView
+        android:id="@+id/textView_user_profile_username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Name"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_user_profile" />
+
+    <TextView
+        android:id="@+id/textView_user_profile_karmaPoints"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Karma: "
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_user_profile_username" />
+
+    <co.ceryle.radiorealbutton.RadioRealButtonGroup
+        android:id="@+id/user_profile_button_group"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_user_profile_karmaPoints"
+        app:rrbg_animateDrawables_enter="overshoot"
+        app:rrbg_animateTexts_enter="overshoot"
+        app:rrbg_dividerColor="#000000"
+        app:rrbg_dividerSize="1dp"
+        app:rrbg_radius="10dp"
+        app:rrbg_selectorColor="#AAAAAA"
+        app:rrbg_selectorSize="6dp">
+
+        <co.ceryle.radiorealbutton.RadioRealButton
+            android:id="@+id/user_profile_btn_profile_posts"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:rrb_drawableHeight="36dp"
+            app:rrb_drawablePadding="8dp"
+            app:rrb_drawableWidth="36dp"
+            app:rrb_ripple="true"
+            app:rrb_rippleColor="#000000"
+            app:rrb_text="POSTS"
+            app:rrb_textColor="#000000" />
+
+        <co.ceryle.radiorealbutton.RadioRealButton
+            android:id="@+id/user_profile_btn_profile_comments"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:rrb_drawableGravity="right"
+            app:rrb_drawableHeight="36dp"
+            app:rrb_drawablePadding="8dp"
+            app:rrb_drawableWidth="36dp"
+            app:rrb_ripple="true"
+            app:rrb_rippleColor="#000000"
+            app:rrb_text="COMMENTS"
+            app:rrb_textColor="#000000" />
+    </co.ceryle.radiorealbutton.RadioRealButtonGroup>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView_user_profile"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/user_profile_button_group"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_user_profile"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:background="@color/GhostWhite"
+        android:minHeight="?attr/actionBarSize"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="?attr/homeAsUpIndicator"
+        app:title=""
+        app:titleTextColor="@android:color/darker_gray"></android.support.v7.widget.Toolbar>
+
+</android.support.constraint.ConstraintLayout>

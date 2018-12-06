@@ -67,6 +67,12 @@
                 android:ems="10"
                 android:inputType="textMultiLine" />
 
+            <RadioButton
+                android:id="@+id/radioButton_show_on_map"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Show Post on Map" />
+
             <Button
                 android:id="@+id/button_submit_post"
                 style="@style/Widget.MaterialComponents.Button"

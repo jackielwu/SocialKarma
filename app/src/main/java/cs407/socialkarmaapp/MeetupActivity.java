@@ -2,6 +2,7 @@ package cs407.socialkarmaapp;
 
 import android.content.Intent;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -38,6 +39,7 @@ public class MeetupActivity extends Fragment {
     private MeetupAdapter meetupAdapter;
 
     private Integer lastStartTime;
+    private SwipeRefreshLayout refreshLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
@@ -67,6 +69,15 @@ public class MeetupActivity extends Fragment {
         });
         meetupRecyclerView.setAdapter(meetupAdapter);
 
+        refreshLayout = view.findViewById(R.id.swipeRefreshLayout_meetups);
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getMeetups();
+                refreshLayout.setRefreshing(false);
+            }
+        });
+
         return view;
     }
 
@@ -85,7 +96,12 @@ public class MeetupActivity extends Fragment {
         APIClient.INSTANCE.getMeetups(lastStartTime, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                System.out.println("Could not get meetups.");
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getActivity(), "Failed to retrieve meetups.", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
