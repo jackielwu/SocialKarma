@@ -123,12 +123,36 @@ object APIClient {
         client.newCall(request).enqueue(callback)
     }
 
+    fun postDeletePost(postId: String, callback: Callback) {
+        var url = baseURL + "/post/delete"
+        var json = JSONObject()
+        json.put("userId", FirebaseAuth.getInstance().currentUser?.uid)
+        json.put("postId", postId)
+
+        val requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json.toString())
+        val request = Request.Builder().url(url).post(requestBody).build()
+        val client = OkHttpClient()
+        client.newCall(request).enqueue(callback)
+    }
+
     fun postNewComment(postId: String, comment: String, callback: Callback) {
         var url = baseURL + "/post/comment"
         val json = JSONObject()
         json.put("userId", FirebaseAuth.getInstance().currentUser?.uid)
         json.put("postId", postId)
         json.put("comment", comment)
+
+        val requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json.toString())
+        val request = Request.Builder().url(url).post(requestBody).build()
+        val client = OkHttpClient()
+        client.newCall(request).enqueue(callback)
+    }
+
+    fun postDeleteComment(postCommentId: String, callback: Callback) {
+        var url = baseURL + "/post/comment/delete"
+        var json = JSONObject()
+        json.put("userId", FirebaseAuth.getInstance().currentUser?.uid)
+        json.put("postCommentId", postCommentId)
 
         val requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json.toString())
         val request = Request.Builder().url(url).post(requestBody).build()
