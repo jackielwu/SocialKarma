@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -151,6 +152,32 @@ public class SearchActivity extends Activity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 switch (resultType) {
                     case 0:
+                        String newText2 = searchEditText.getText().toString();
+                        if (newText2 != null && !newText2.isEmpty()) {
+                            FirebaseDatabase.getInstance().getReference("posts").orderByChild("title").startAt(newText2).endAt(newText2 + "\uf8ff").addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    List<Object> newPosts = new ArrayList<>();
+                                    for(DataSnapshot snap: dataSnapshot.getChildren()) {
+                                        Post newPost = snap.getValue(Post.class);
+                                        newPost.setPostId(snap.getKey());
+                                        newPosts.add(newPost);
+                                    }
+                                    final List<Object> newPostsList = newPosts;
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            searchResultsAdapter.setResults(newPostsList);
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                        }
                         break;
                     case 1:
                         String newText = searchEditText.getText().toString();
