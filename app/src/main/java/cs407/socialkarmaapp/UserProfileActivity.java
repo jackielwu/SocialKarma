@@ -155,7 +155,34 @@ public class UserProfileActivity extends AppCompatActivity {
 
         commentAdapter = new CommentsAdapter(commentList, this, new CommentAdapterDelegate() {
             @Override
-            public void deleteComment(@NotNull Comment comment, int atIndex) {}
+            public void deleteComment(@NotNull Comment comment, int atIndex) {
+                final Comment c = comment;
+                APIClient.INSTANCE.postDeleteComment(c.getPostCommentId(), new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(UserProfileActivity.this, "Failed to delete this comment", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        if (response.code() >= 400) {
+                            return;
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                //TODO: delete comment locally?
+                                commentAdapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
+                });
+            }
 
             @Override
             public void upVoteButtonClicked(cs407.socialkarmaapp.Models.Comment comment) {
@@ -224,7 +251,34 @@ public class UserProfileActivity extends AppCompatActivity {
         }, false);
         postsAdapter = new PostsAdapter(list, this, new PostAdapterDelegate() {
             @Override
-            public void deletePost(@NotNull Post post, int atIndex) {}
+            public void deletePost(@NotNull Post post, int atIndex) {
+                final Post p = post;
+                APIClient.INSTANCE.postDeletePost(p.getPostId(), new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(UserProfileActivity.this, "Failed to delete this post", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        if (response.code() >= 400) {
+                            return;
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                //TODO: delete post locally?
+                                postsAdapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
+                });
+            }
 
             @Override
             public void upVoteButtonClicked(Post post) {
