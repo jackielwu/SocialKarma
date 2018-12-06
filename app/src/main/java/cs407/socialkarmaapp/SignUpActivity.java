@@ -34,7 +34,7 @@ public class SignUpActivity extends AppCompatActivity {
         e1 = (EditText)findViewById(R.id.editText2);
         e2 = (EditText)findViewById(R.id.editText);
         e3 = (EditText)findViewById(R.id.editText3);
-        usernameEditText = findViewById(R.id.editText_signup_username)
+        usernameEditText = findViewById(R.id.editText_signup_username);
         backButton = findViewById(R.id.signup_back);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
