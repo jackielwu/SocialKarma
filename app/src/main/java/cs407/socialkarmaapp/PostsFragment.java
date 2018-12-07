@@ -275,6 +275,16 @@ public class PostsFragment extends Fragment implements SortByDelegate {
 
                                 @Override
                                 public void onResponse(Call call, Response response) throws IOException {
+                                    if (response.code() >= 400) {
+                                        getActivity().runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                progressBar.setVisibility(View.GONE);
+                                                adapter.setType(EmptyContentViewHolder.EmptyContentType.EMPTY);
+                                            }
+                                        });
+                                        return;
+                                    }
                                     String body = response.body().string();
                                     Gson gson = new GsonBuilder().create();
 
@@ -283,13 +293,13 @@ public class PostsFragment extends Fragment implements SortByDelegate {
                                     getActivity().runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            progressBar.setVisibility(View.GONE);
                                             if (posts.isEmpty()) {
                                                 adapter.setType(EmptyContentViewHolder.EmptyContentType.ERROR);
                                             } else {
                                                 adapter.setPosts(posts);
                                                 adapter.setType(EmptyContentViewHolder.EmptyContentType.NOTEMPTY);
                                             }
+                                            progressBar.setVisibility(View.GONE);
                                         }
                                     });
                                 }

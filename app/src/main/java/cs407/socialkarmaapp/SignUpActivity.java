@@ -82,6 +82,7 @@ public class SignUpActivity extends AppCompatActivity {
                         });
                     }
                     else{
+                        progressDialog.hide();
                         Toast.makeText(getApplicationContext(), "This email has already sign up for an account", Toast.LENGTH_LONG).show();
                     }
                 }

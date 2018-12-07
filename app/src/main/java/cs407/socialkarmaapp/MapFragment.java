@@ -102,7 +102,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             LatLng myLatLng = new LatLng(
                     latitude,longitude);
 
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLatLng,15));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng,15));
 
             getPosts();
         }

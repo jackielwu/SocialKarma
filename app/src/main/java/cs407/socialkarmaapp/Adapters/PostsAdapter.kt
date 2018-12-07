@@ -70,12 +70,19 @@ class PostsAdapter(private var posts: MutableList<Post>, private val context: Co
     }
 
     override fun getItemViewType(position: Int): Int {
-        when (position) {
-            0 -> {
-                return 0
+        when (emptyContentType) {
+            EmptyContentViewHolder.EmptyContentType.NOTEMPTY -> {
+                when (position) {
+                    0 -> {
+                        return 0
+                    }
+                    else -> {
+                        return 1
+                    }
+                }
             }
             else -> {
-                return 1
+                return 2
             }
         }
     }
