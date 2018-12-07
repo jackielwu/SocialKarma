@@ -46,6 +46,7 @@ import co.ceryle.radiorealbutton.RadioRealButtonGroup;
 import co.intentservice.chatui.models.ChatMessage;
 import cs407.socialkarmaapp.Adapters.CommentAdapterDelegate;
 import cs407.socialkarmaapp.Adapters.CommentsAdapter;
+import cs407.socialkarmaapp.Adapters.EmptyContentViewHolder;
 import cs407.socialkarmaapp.Adapters.PostAdapterDelegate;
 import cs407.socialkarmaapp.Adapters.PostHeaderDelegate;
 import cs407.socialkarmaapp.Adapters.PostsAdapter;
@@ -345,7 +346,7 @@ public class UserProfileActivity extends AppCompatActivity {
             public void sortByButtonClicked(@NotNull SortBy sortBy) {
                 dialog.show(getSupportFragmentManager(), "postsDialog");
             }
-        }, false, false);
+        }, false, false, EmptyContentViewHolder.EmptyContentType.NOTEMPTY);
 
         querypost = database.getReference("posts").orderByChild("author").equalTo(uid);
 

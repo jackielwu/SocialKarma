@@ -153,6 +153,10 @@ public class ChatMessagesActivity extends Activity {
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String inputMessage = messageEditText.getText().toString();
+                if (inputMessage == null || inputMessage.isEmpty()) {
+                    return;
+                }
                 final FirebaseUser currUser = FirebaseAuth.getInstance().getCurrentUser();
                 if (currUser != null) {
 
@@ -160,13 +164,23 @@ public class ChatMessagesActivity extends Activity {
                         APIClient.INSTANCE.postMessage(chatId, messageEditText.getText().toString(), new Callback() {
                             @Override
                             public void onFailure(Call call, IOException e) {
-                                Toast.makeText(ChatMessagesActivity.this, "Failed to send message.", Toast.LENGTH_SHORT).show();
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(ChatMessagesActivity.this, "Failed to send message.", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                             }
 
                             @Override
                             public void onResponse(Call call, Response response) throws IOException {
                                 if (response.code() >= 400) {
-                                    Toast.makeText(ChatMessagesActivity.this, "Failed to send message.", Toast.LENGTH_SHORT).show();
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(ChatMessagesActivity.this, "Failed to send message.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                                 }
                                 runOnUiThread(new Runnable() {
                                     @Override
@@ -180,13 +194,23 @@ public class ChatMessagesActivity extends Activity {
                         APIClient.INSTANCE.postChat(partnerId, messageEditText.getText().toString(), new Callback() {
                             @Override
                             public void onFailure(Call call, IOException e) {
-                                Toast.makeText(ChatMessagesActivity.this, "Failed to send message.", Toast.LENGTH_SHORT).show();
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(ChatMessagesActivity.this, "Failed to send message.", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                             }
 
                             @Override
                             public void onResponse(Call call, Response response) throws IOException {
                                 if (response.code() >= 400) {
-                                    Toast.makeText(ChatMessagesActivity.this, "Failed to send message.", Toast.LENGTH_SHORT).show();
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(ChatMessagesActivity.this, "Failed to send message.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                                 }
 
                                 String body = response.body().string();

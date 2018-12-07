@@ -92,17 +92,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         Location location = locationManager.getLastKnownLocation(locationManager
                 .getBestProvider(criteria, false));
 
-        Log.e("","location granted");
-        double latitude = location.getLatitude();
-        double longitude = location.getLongitude();
+        if (location != null) {
+            Log.e("","location granted");
+            double latitude = location.getLatitude();
+            double longitude = location.getLongitude();
 
-        Log.e("",latitude+" "+longitude);
-        LatLng myLatLng = new LatLng(
-                latitude,longitude);
+            Log.e("",latitude+" "+longitude);
+            LatLng myLatLng = new LatLng(
+                    latitude,longitude);
 
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLatLng,15));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLatLng,15));
 
-        getPosts();
+            getPosts();
+        }
         //mMap.moveCamera(CameraUpdateFactory.newLatLng(myLatLng));
     }
 

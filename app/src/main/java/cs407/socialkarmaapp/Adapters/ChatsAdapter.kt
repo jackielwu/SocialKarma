@@ -7,12 +7,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import co.intentservice.chatui.ChatView
 import cs407.socialkarmaapp.*
 import cs407.socialkarmaapp.Models.Chat
 import java.text.SimpleDateFormat
 import java.util.*
 
-class ChatsAdapter(private var chats: MutableList<Chat>, private val context: Context): RecyclerView.Adapter<ChatViewHolder>() {
+class ChatsAdapter(private var chats: MutableList<Chat>, private var emptyContentType: EmptyContentViewHolder.EmptyContentType, private val context: Context): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     fun setChats(newChats: MutableList<Chat>) {
         this.chats = newChats
         this.notifyDataSetChanged()
@@ -39,19 +40,50 @@ class ChatsAdapter(private var chats: MutableList<Chat>, private val context: Co
         this.notifyDataSetChanged()
     }
 
+    fun setType(newType: EmptyContentViewHolder.EmptyContentType) {
+        this.emptyContentType = newType
+        this.notifyDataSetChanged()
+    }
+
     override fun getItemCount(): Int {
-        return chats.size
+        when (emptyContentType) {
+            EmptyContentViewHolder.EmptyContentType.NOTEMPTY -> {
+                return chats.size
+            }
+            else -> {
+                return 1
+            }
+        }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
-        val layoutInflater = LayoutInflater.from(parent.context)
-        val cellForRow = layoutInflater.inflate(R.layout.chat_item, parent, false)
-        return ChatViewHolder(cellForRow)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        when (emptyContentType) {
+            EmptyContentViewHolder.EmptyContentType.NOTEMPTY -> {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val cellForRow = layoutInflater.inflate(R.layout.chat_item, parent, false)
+                return ChatViewHolder(cellForRow)
+            }
+            else -> {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val cellForRow = layoutInflater.inflate(R.layout.empty_content_row, parent, false)
+                return EmptyContentViewHolder(cellForRow)
+            }
+        }
     }
 
-    override fun onBindViewHolder(p0: ChatViewHolder, p1: Int) {
-        p0.setupView(chats, p1)
-        p0.didSelectRow(chats, p1, context)
+    override fun onBindViewHolder(p0: RecyclerView.ViewHolder, p1: Int) {
+        when (emptyContentType) {
+            EmptyContentViewHolder.EmptyContentType.NOTEMPTY -> {
+                (p0 as ChatViewHolder).setupView(chats, p1)
+                (p0 as ChatViewHolder).didSelectRow(chats, p1, context)
+            }
+            EmptyContentViewHolder.EmptyContentType.ERROR -> {
+                (p0 as EmptyContentViewHolder).setupView("There seemed to be an error loading your messages.\nPlease try again.", emptyContentType)
+            }
+            EmptyContentViewHolder.EmptyContentType.EMPTY -> {
+                (p0 as EmptyContentViewHolder).setupView("You don't have any messages right now.\nStart a conversation using the '+' button!", emptyContentType)
+            }
+        }
     }
 }
 

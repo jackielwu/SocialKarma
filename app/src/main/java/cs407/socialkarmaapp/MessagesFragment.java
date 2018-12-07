@@ -22,9 +22,12 @@ import com.google.gson.GsonBuilder;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import cs407.socialkarmaapp.Adapters.ChatsAdapter;
+import cs407.socialkarmaapp.Adapters.EmptyContentViewHolder;
 import cs407.socialkarmaapp.Helpers.APIClient;
 import cs407.socialkarmaapp.Models.Chat;
 import okhttp3.Call;
@@ -50,7 +53,7 @@ public class MessagesFragment extends Fragment {
 
         recyclerView = view.findViewById(R.id.recyclerView_chats);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        chatsAdapter = new ChatsAdapter(new ArrayList<Chat>(), getActivity());
+        chatsAdapter = new ChatsAdapter(new ArrayList<Chat>(), EmptyContentViewHolder.EmptyContentType.NOTEMPTY, getActivity());
         recyclerView.setAdapter(chatsAdapter);
         refreshLayout = view.findViewById(R.id.swipeRefreshLayout_messages);
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -78,6 +81,7 @@ public class MessagesFragment extends Fragment {
                     @Override
                     public void run() {
                         Toast.makeText(getContext(), "Failed to retrieve conversations.", Toast.LENGTH_SHORT).show();
+                        chatsAdapter.setType(EmptyContentViewHolder.EmptyContentType.ERROR);
                     }
                 });
             }
@@ -85,13 +89,30 @@ public class MessagesFragment extends Fragment {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.code() >= 400) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            chatsAdapter.setType(EmptyContentViewHolder.EmptyContentType.EMPTY);
+                        }
+                    });
                     return;
                 }
                 String body = response.body().string();
                 Gson gson = new GsonBuilder().create();
 
-                Chat[] chatsArray = gson.fromJson(body, Chat[].class);
+                final Chat[] chatsArray = gson.fromJson(body, Chat[].class);
                 final List<Chat> chats = new ArrayList<>(Arrays.asList(chatsArray));
+                Collections.sort(chats, new Comparator<Chat>() {
+                    @Override
+                    public int compare(Chat o1, Chat o2) {
+                        if (o1.getLastTimestamp() < o2.getLastTimestamp()) {
+                            return 1;
+                        } else if (o1.getLastTimestamp() > o2.getLastTimestamp()) {
+                            return -1;
+                        }
+                        return 0;
+                    }
+                });
                 int index = 0;
                 for (final Chat chat: chats) {
                     final int tempIndex = index;
@@ -116,7 +137,12 @@ public class MessagesFragment extends Fragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        chatsAdapter.setChats(chats);
+                        if (chats.isEmpty()) {
+                            chatsAdapter.setType(EmptyContentViewHolder.EmptyContentType.EMPTY);
+                        } else {
+                            chatsAdapter.setChats(chats);
+                            chatsAdapter.setType(EmptyContentViewHolder.EmptyContentType.NOTEMPTY);
+                        }
                     }
                 });
             }

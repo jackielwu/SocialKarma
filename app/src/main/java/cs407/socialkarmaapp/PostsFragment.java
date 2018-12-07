@@ -24,6 +24,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,6 +46,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cs407.socialkarmaapp.Adapters.EmptyContentViewHolder;
 import cs407.socialkarmaapp.Adapters.PostAdapterDelegate;
 import cs407.socialkarmaapp.Adapters.PostHeaderDelegate;
 import cs407.socialkarmaapp.Adapters.PostsAdapter;
@@ -100,10 +102,14 @@ public class PostsFragment extends Fragment implements SortByDelegate {
     PostSortByDialog dialog;
 
     private FusedLocationProviderClient mFusedLocationClient;
+    private ProgressBar progressBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_main, parent, false);
+
+        progressBar = view.findViewById(R.id.ctrlActivityIndicator_posts);
+        progressBar.setVisibility(View.GONE);
 
         //initializing objects
         list = new ArrayList<>();
@@ -179,7 +185,7 @@ public class PostsFragment extends Fragment implements SortByDelegate {
             public void sortByButtonClicked(@NotNull SortBy sortBy) {
                 dialog.show(getFragmentManager(), "showSortByDialog");
             }
-        }, true, false);
+        }, true, false, EmptyContentViewHolder.EmptyContentType.NOTEMPTY);
 
         //attaching adapter to the listview
         recyclerView.setAdapter(adapter);
@@ -225,52 +231,73 @@ public class PostsFragment extends Fragment implements SortByDelegate {
     }
 
     private void getPosts() {
+        progressBar.setVisibility(View.VISIBLE);
         checkPermissions();
         mFusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
             @Override
             public void onSuccess(Location location) {
-                if (location != null) {
-                    APIClient.INSTANCE.getGeolocation(location, new Callback() {
-                        @Override
-                        public void onFailure(Call call, IOException e) {
-                            System.out.println("Could not get a geolocation.");
-                        }
-
-                        @Override
-                        public void onResponse(Call call, Response response) throws IOException {
-                            String body = response.body().string();
-                            Gson gson = new GsonBuilder().create();
-
-                            Map<String, String> map = new HashMap<String, String>();
-                            map = (Map<String, String>)gson.fromJson(body, map.getClass());
-                            String geolocation = map.get("geo");
-
-                            if (geolocation != null) {
-                                APIClient.INSTANCE.getPosts(geolocation, dialog.getSelected(), null, false, new Callback() {
-                                    @Override
-                                    public void onFailure(Call call, IOException e) {
-                                        System.out.println("Could not get posts.");
-                                    }
-
-                                    @Override
-                                    public void onResponse(Call call, Response response) throws IOException {
-                                        String body = response.body().string();
-                                        Gson gson = new GsonBuilder().create();
-
-                                        Post[] postsArray = gson.fromJson(body, Post[].class);
-                                        final List<Post> posts= new ArrayList<Post>(Arrays.asList(postsArray));
-                                        getActivity().runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                adapter.setPosts(posts);
-                                            }
-                                        });
-                                    }
-                                });
+            if (location != null) {
+                APIClient.INSTANCE.getGeolocation(location, new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        System.out.println("Could not get a geolocation.");
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressBar.setVisibility(View.GONE);
+                                adapter.setType(EmptyContentViewHolder.EmptyContentType.ERROR);
                             }
+                        });
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        String body = response.body().string();
+                        Gson gson = new GsonBuilder().create();
+
+                        Map<String, String> map = new HashMap<String, String>();
+                        map = (Map<String, String>)gson.fromJson(body, map.getClass());
+                        String geolocation = map.get("geo");
+
+                        if (geolocation != null) {
+                            APIClient.INSTANCE.getPosts(geolocation, dialog.getSelected(), null, false, new Callback() {
+                                @Override
+                                public void onFailure(Call call, IOException e) {
+                                    System.out.println("Could not get posts.");
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            progressBar.setVisibility(View.GONE);
+                                            adapter.setType(EmptyContentViewHolder.EmptyContentType.ERROR);
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void onResponse(Call call, Response response) throws IOException {
+                                    String body = response.body().string();
+                                    Gson gson = new GsonBuilder().create();
+
+                                    Post[] postsArray = gson.fromJson(body, Post[].class);
+                                    final List<Post> posts= new ArrayList<Post>(Arrays.asList(postsArray));
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            progressBar.setVisibility(View.GONE);
+                                            if (posts.isEmpty()) {
+                                                adapter.setType(EmptyContentViewHolder.EmptyContentType.ERROR);
+                                            } else {
+                                                adapter.setPosts(posts);
+                                                adapter.setType(EmptyContentViewHolder.EmptyContentType.NOTEMPTY);
+                                            }
+                                        }
+                                    });
+                                }
+                            });
                         }
-                    });
-                }
+                    }
+                });
+            }
             }
         });
     }

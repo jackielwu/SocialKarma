@@ -28,15 +28,15 @@ object APIClient {
         client.newCall(request).enqueue(callback)
     }
 
-    fun getMeetups(lastStartTime: Int?, callback: Callback) {
+    fun getMeetups(geoLocation: String, lastStartTime: Int?, callback: Callback) {
         var url: String
         lastStartTime?.let {
-            url = baseURL + "/meetups?endAt=" + lastStartTime + "&userId=" + FirebaseAuth.getInstance().currentUser?.uid
+            url = baseURL + "/meetups?endAt=" + lastStartTime + "&userId=" + FirebaseAuth.getInstance().currentUser?.uid + "&geolocation=" + geoLocation
             val request = Request.Builder().url(url).build()
             val client = OkHttpClient()
             client.newCall(request).enqueue(callback)
         } ?: run {
-            url = baseURL + "/meetups?userId=" + FirebaseAuth.getInstance().currentUser?.uid
+            url = baseURL + "/meetups?userId=" + FirebaseAuth.getInstance().currentUser?.uid + "&geolocation=" + geoLocation
             val request = Request.Builder().url(url).build()
             val client = OkHttpClient()
             client.newCall(request).enqueue(callback)
