@@ -100,7 +100,7 @@ public class UserProfileActivity extends AppCompatActivity {
     TextView karmaTextView;
     RecyclerView recyclerView;
     Toolbar toolbar;
-    User currentUser;
+    User currentUser, currentClientUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,6 +151,18 @@ public class UserProfileActivity extends AppCompatActivity {
             }
         });
 
+        database.getReference("users/" + FirebaseAuth.getInstance().getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                currentClientUser = dataSnapshot.getValue(User.class);
+                currentClientUser.uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+
         list = new ArrayList<>();
         commentList = new ArrayList<>();
 
@@ -182,6 +194,7 @@ public class UserProfileActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 c.setVotes(c.getVotes() + 1);
+                                c.setVoted(c.getVoted() + 1);
                                 commentAdapter.notifyDataSetChanged();
                             }
                         });
@@ -212,6 +225,7 @@ public class UserProfileActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 c.setVotes(c.getVotes() - 1);
+                                c.setVoted(c.getVoted() - 1);
                                 commentAdapter.notifyDataSetChanged();
                             }
                         });
@@ -252,6 +266,7 @@ public class UserProfileActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 p.setVotes(p.getVotes() + 1);
+                                p.setVoted(p.getVoted() + 1);
                                 postsAdapter.notifyDataSetChanged();
                             }
                         });
@@ -282,6 +297,7 @@ public class UserProfileActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 p.setVotes(p.getVotes() - 1);
+                                p.setVoted(p.getVoted() - 1);
                                 postsAdapter.notifyDataSetChanged();
                             }
                         });
@@ -395,6 +411,9 @@ public class UserProfileActivity extends AppCompatActivity {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Post post = snapshot.getValue(Post.class);
                     post.setPostId(snapshot.getKey());
+                    if (currentClientUser.votes.get("posts") != null && currentClientUser.votes.get("posts").get(post.getPostId()) != null) {
+                        post.setVoted(currentClientUser.votes.get("posts").get(post.getPostId()));
+                    }
                     list.add(post);
 
                 }
@@ -421,6 +440,11 @@ public class UserProfileActivity extends AppCompatActivity {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     cs407.socialkarmaapp.Models.Comment comment = snapshot.getValue(Comment.class);
                     comment.setPostCommentId(snapshot.getKey());
+                    Map<String, Integer> map = currentClientUser.votes.get("postComments");
+
+                    if (map != null && map.get(comment.getPostCommentId()) != null) {
+                        comment.setVoted(currentClientUser.votes.get("postComments").get(comment.getPostCommentId()));
+                    }
                     commentList.add(comment);
 
                 }

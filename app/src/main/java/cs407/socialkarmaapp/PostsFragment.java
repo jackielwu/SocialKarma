@@ -144,6 +144,7 @@ public class PostsFragment extends Fragment implements SortByDelegate {
                             @Override
                             public void run() {
                                 p.setVotes(p.getVotes() + 1);
+                                p.setVoted(p.getVoted() + 1);
                                 adapter.notifyDataSetChanged();
                             }
                         });
@@ -174,6 +175,7 @@ public class PostsFragment extends Fragment implements SortByDelegate {
                             @Override
                             public void run() {
                                 p.setVotes(p.getVotes() - 1);
+                                p.setVoted(p.getVoted() - 1);
                                 adapter.notifyDataSetChanged();
                             }
                         });
@@ -207,7 +209,9 @@ public class PostsFragment extends Fragment implements SortByDelegate {
     public void onResume() {
         super.onResume();
         adapter.setSortby(this.dialog.getSelected());
-        getPosts();
+//        if (list == null || list.isEmpty()) {
+            getPosts();
+//        }
     }
 
     private boolean checkPermissions() {
@@ -300,6 +304,7 @@ public class PostsFragment extends Fragment implements SortByDelegate {
 
                                     Post[] postsArray = gson.fromJson(body, Post[].class);
                                     final List<Post> posts= new ArrayList<Post>(Arrays.asList(postsArray));
+                                    PostsFragment.this.list = posts;
                                     getActivity().runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {

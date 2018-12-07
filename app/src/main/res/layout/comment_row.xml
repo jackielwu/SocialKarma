@@ -16,7 +16,8 @@
         android:layout_marginTop="8dp"
         android:text="{gmd-thumb-up}"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
 
     <com.mikepenz.iconics.view.IconicsButton

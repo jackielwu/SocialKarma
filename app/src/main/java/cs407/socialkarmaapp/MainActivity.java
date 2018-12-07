@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        Button login_btn = (Button)findViewById(R.id.button2);
+        final Button login_btn = (Button)findViewById(R.id.button2);
 
         e1 = (EditText)findViewById(R.id.editText2);
         e2 = (EditText)findViewById(R.id.editText);
@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
         });
         login_btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                
+                login_btn.setEnabled(false);
                 String email = e1.getText().toString();
                 String password = e2.getText().toString();
                 if(TextUtils.isEmpty(email)){
@@ -139,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
                 auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+                        login_btn.setEnabled(true);
                         if(task.isSuccessful()){
                             launchBaseActivity();
 

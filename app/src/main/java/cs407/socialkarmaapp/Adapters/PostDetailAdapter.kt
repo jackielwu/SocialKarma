@@ -2,6 +2,7 @@ package cs407.socialkarmaapp.Adapters
 
 import android.content.Context
 import android.content.Intent
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -166,6 +167,17 @@ class PostDetailViewHolder(val view: View): RecyclerView.ViewHolder(view) {
             context.startActivity(intent)
         }
 
+        if (post.voted > 0) {
+            upVoteButton.background = ContextCompat.getDrawable(context, R.drawable.vote_button_rounded)
+            downVoteButton.background = ContextCompat.getDrawable(context, R.drawable.vote_button_neutral)
+        } else if (post.voted < 0) {
+            downVoteButton.background = ContextCompat.getDrawable(context, R.drawable.vote_button_rounded)
+            upVoteButton.background = ContextCompat.getDrawable(context, R.drawable.vote_button_neutral)
+        } else {
+            upVoteButton.background = ContextCompat.getDrawable(context, R.drawable.vote_button_neutral)
+            downVoteButton.background = ContextCompat.getDrawable(context, R.drawable.vote_button_neutral)
+        }
+
         upVoteButton.setOnClickListener {
             delegate.upVoteButtonClicked(post)
         }
@@ -198,6 +210,17 @@ class CommentViewHolder(val view: View): RecyclerView.ViewHolder(view) {
             val userId = comment.author
             intent.putExtra(UserProfileActivity.EXTRA_USER_PROFILE_ID, userId)
             context.startActivity(intent)
+        }
+
+        if (comment.voted > 0) {
+            upVoteButton.background = ContextCompat.getDrawable(context, R.drawable.vote_button_rounded)
+            downVoteButton.background = ContextCompat.getDrawable(context, R.drawable.vote_button_neutral)
+        } else if (comment.voted < 0) {
+            downVoteButton.background = ContextCompat.getDrawable(context, R.drawable.vote_button_rounded)
+            upVoteButton.background = ContextCompat.getDrawable(context, R.drawable.vote_button_neutral)
+        } else {
+            upVoteButton.background = ContextCompat.getDrawable(context, R.drawable.vote_button_neutral)
+            downVoteButton.background = ContextCompat.getDrawable(context, R.drawable.vote_button_neutral)
         }
 
         upVoteButton.setOnClickListener {

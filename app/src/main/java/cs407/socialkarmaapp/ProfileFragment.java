@@ -31,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import co.ceryle.radiorealbutton.RadioRealButton;
 import co.ceryle.radiorealbutton.RadioRealButtonGroup;
@@ -85,6 +86,8 @@ public class ProfileFragment extends Fragment {
     PostsAdapter postsAdapter;
     CommentsAdapter commentAdapter;
     TextView karma, username;
+    Button changePasswordButton;
+    User currentUser;
 
     int groupPosition = 0;
     SortByDialog dialog;
@@ -99,6 +102,7 @@ public class ProfileFragment extends Fragment {
         currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         uid = currentFirebaseUser.getUid();
         database = FirebaseDatabase.getInstance();
+
 
         dialog = new SortByDialog(new SortByDelegate() {
             @Override
@@ -116,15 +120,33 @@ public class ProfileFragment extends Fragment {
         queryKarma.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
-                System.out.println(user.username);
-                karma.setText(("Karma: " + user.karma));
-                username.setText(user.username);
+                currentUser = dataSnapshot.getValue(User.class);
+                System.out.println(currentUser.username);
+                karma.setText(("Karma: " + currentUser.karma));
+                username.setText(currentUser.username);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
+
+        changePasswordButton = view.findViewById(R.id.btn_Changepw);
+        changePasswordButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+                FirebaseAuth.getInstance().sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()){
+                            Toast.makeText(getActivity(), "Please check your email for password reset", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(getActivity(), "Failed to send password reset link. Please try again later.", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
             }
         });
 
@@ -198,6 +220,7 @@ public class ProfileFragment extends Fragment {
                             @Override
                             public void run() {
                                 c.setVotes(c.getVotes() + 1);
+                                c.setVoted(c.getVoted() + 1);
                                 commentAdapter.notifyDataSetChanged();
                             }
                         });
@@ -228,6 +251,7 @@ public class ProfileFragment extends Fragment {
                             @Override
                             public void run() {
                                 c.setVotes(c.getVotes() - 1);
+                                c.setVoted(c.getVoted() - 1);
                                 commentAdapter.notifyDataSetChanged();
                             }
                         });
@@ -309,6 +333,7 @@ public class ProfileFragment extends Fragment {
                             @Override
                             public void run() {
                                 p.setVotes(p.getVotes() + 1);
+                                p.setVoted(p.getVoted() + 1);
                                 postsAdapter.notifyDataSetChanged();
                             }
                         });
@@ -339,6 +364,7 @@ public class ProfileFragment extends Fragment {
                             @Override
                             public void run() {
                                 p.setVotes(p.getVotes() - 1);
+                                p.setVoted(p.getVoted() - 1);
                                 postsAdapter.notifyDataSetChanged();
                             }
                         });
@@ -393,18 +419,33 @@ public class ProfileFragment extends Fragment {
         Button delete_btn = (Button)view.findViewById(R.id.btn_DeleteAccount);
         delete_btn.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                FirebaseUser tempUser = FirebaseAuth.getInstance().getCurrentUser();
-                tempUser.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
-                            FirebaseDatabase.getInstance().getReference("users/" + uid).removeValue();
-                            Toast.makeText(getActivity(), "Account deleted", Toast.LENGTH_LONG).show();
-                            BaseActivity.launchMainActivity(getActivity());
-                        }
-                    }
-                });
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage("Are you sure you would like to delete this account?")
+                        .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                                FirebaseUser tempUser = FirebaseAuth.getInstance().getCurrentUser();
+
+                                tempUser.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful()){
+                                            FirebaseDatabase.getInstance().getReference("users/" + uid).removeValue();
+                                            Toast.makeText(getActivity(), "Account deleted", Toast.LENGTH_LONG).show();
+                                            BaseActivity.launchMainActivity(getActivity());
+                                        }
+                                    }
+                                });
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        });
+                Dialog deleteDialog = builder.create();
+                deleteDialog.show();
             }
         });
         return view;
@@ -431,6 +472,9 @@ public class ProfileFragment extends Fragment {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Post post = snapshot.getValue(Post.class);
                     post.setPostId(snapshot.getKey());
+                    if (currentUser.votes.get("posts") != null && currentUser.votes.get("posts").get(post.getPostId()) != null) {
+                        post.setVoted(currentUser.votes.get("posts").get(post.getPostId()));
+                    }
                     list.add(post);
                 }
                 getActivity().runOnUiThread(new Runnable() {
@@ -456,6 +500,11 @@ public class ProfileFragment extends Fragment {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Comment comment = snapshot.getValue(Comment.class);
                     comment.setPostCommentId(snapshot.getKey());
+                    Map<String, Integer> map = currentUser.votes.get("postComments");
+
+                    if (map != null && map.get(comment.getPostCommentId()) != null) {
+                        comment.setVoted(currentUser.votes.get("postComments").get(comment.getPostCommentId()));
+                    }
                     commentList.add(comment);
 
                 }

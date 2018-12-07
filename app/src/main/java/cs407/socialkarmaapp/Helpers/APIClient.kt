@@ -19,7 +19,7 @@ object APIClient {
     }
 
     fun getPosts(geoLocation: String, sortBy: Int, lastStartTime: Int?, showOnMap: Boolean, callback: Callback) {
-        var url = baseURL + "/posts?geolocation=" + geoLocation + "&sortby=" + sortBy
+        var url = baseURL + "/posts?geolocation=" + geoLocation + "&sortby=" + sortBy + "&userId=" + FirebaseAuth.getInstance().currentUser?.uid
         if (showOnMap != null && showOnMap) {
             url += "&showOnMap=true"
         }
@@ -60,6 +60,7 @@ object APIClient {
         val json = JSONObject()
         json.put("postId", postId)
         json.put("sortby", sortBy)
+        json.put("userId", FirebaseAuth.getInstance().currentUser?.uid)
 
         val requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json.toString())
         val request = Request.Builder().url(url).post(requestBody).build()

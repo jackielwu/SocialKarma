@@ -89,6 +89,7 @@ public class SearchActivity extends Activity {
                                     @Override
                                     public void run() {
                                         p.setVotes(p.getVotes() + 1);
+                                        p.setVoted(p.getVoted() + 1);
                                         searchResultsAdapter.notifyDataSetChanged();
                                     }
                                 });
@@ -119,6 +120,7 @@ public class SearchActivity extends Activity {
                                     @Override
                                     public void run() {
                                         p.setVotes(p.getVotes() - 1);
+                                        p.setVoted(p.getVoted() - 1);
                                         searchResultsAdapter.notifyDataSetChanged();
                                     }
                                 });

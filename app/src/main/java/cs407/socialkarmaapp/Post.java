@@ -9,10 +9,11 @@ public class Post implements Serializable {
     private String title, content, author, authorName;
     private int timestamp;
     private Map<String, Double> coordinates;
+    private int voted;
 
     public Post() {}
 
-    public Post(String postId, int votes, int commentCount, String title, String content, String author, int timestamp, String authorName, Map<String, Double> coordinates) {
+    public Post(String postId, int votes, int commentCount, String title, String content, String author, int timestamp, String authorName, Map<String, Double> coordinates, int voted) {
         this.postId = postId;
         this.title = title;
         this.content = content;
@@ -22,6 +23,7 @@ public class Post implements Serializable {
         this.commentCount = commentCount;
         this.timestamp = timestamp;
         this.coordinates = coordinates;
+        this.voted = voted;
     }
 
     public int getUpvoteCount() {
@@ -53,9 +55,11 @@ public class Post implements Serializable {
     public String getAuthorName() {
         return authorName;
     }
+    public int getVoted() { return voted; }
     public Map<String, Double> getCoordinates() { return coordinates; }
     public int getTimestamp() { return timestamp; }
     public int getVotes() { return votes; }
     public void setVotes(int vote) {this.votes = vote; }
     public void setPostId(String postId) {this.postId = postId;}
+    public void setVoted(int voted) {this.voted = voted;}
 }

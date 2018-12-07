@@ -174,6 +174,7 @@ public class PostActivity extends AppCompatActivity implements SortByDelegate {
                             @Override
                             public void run() {
                                 p.setVotes(p.getVotes() + 1);
+                                p.setVoted(p.getVoted() + 1);
                                 postDetailAdapter.notifyDataSetChanged();
                             }
                         });
@@ -205,6 +206,7 @@ public class PostActivity extends AppCompatActivity implements SortByDelegate {
                             @Override
                             public void run() {
                                 p.setVotes(p.getVotes() - 1);
+                                p.setVoted(p.getVoted() - 1);
                                 postDetailAdapter.notifyDataSetChanged();
                             }
                         });
@@ -244,6 +246,7 @@ public class PostActivity extends AppCompatActivity implements SortByDelegate {
                             @Override
                             public void run() {
                                 c.setVotes(c.getVotes() + 1);
+                                c.setVoted(c.getVoted() + 1);
                                 postDetailAdapter.notifyDataSetChanged();
                             }
                         });
@@ -275,6 +278,7 @@ public class PostActivity extends AppCompatActivity implements SortByDelegate {
                             @Override
                             public void run() {
                                 c.setVotes(c.getVotes() - 1);
+                                c.setVoted(c.getVoted() - 1);
                                 postDetailAdapter.notifyDataSetChanged();
                             }
                         });

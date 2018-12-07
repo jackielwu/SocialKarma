@@ -8,6 +8,7 @@ public class User implements Serializable {
     public int karma;
     public String uid;
     public Map<String, String> chatMembers;
+    public Map<String, Map<String, Integer>> votes;
 
     public User() {
 
