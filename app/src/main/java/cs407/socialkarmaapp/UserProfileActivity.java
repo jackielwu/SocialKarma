@@ -156,6 +156,13 @@ public class UserProfileActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 currentClientUser = dataSnapshot.getValue(User.class);
                 currentClientUser.uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                if (currentClientUser.chatMembers == null) {
+                    currentClientUser.chatMembers = new HashMap<>();
+                }
+                if (currentClientUser.votes == null) {
+                    currentClientUser.votes = new HashMap<>();
+                }
             }
 
             @Override
@@ -411,7 +418,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Post post = snapshot.getValue(Post.class);
                     post.setPostId(snapshot.getKey());
-                    if (currentClientUser.votes.get("posts") != null && currentClientUser.votes.get("posts").get(post.getPostId()) != null) {
+                    if (currentClientUser.votes != null && currentClientUser.votes.get("posts") != null && currentClientUser.votes.get("posts").get(post.getPostId()) != null) {
                         post.setVoted(currentClientUser.votes.get("posts").get(post.getPostId()));
                     }
                     list.add(post);
@@ -440,10 +447,12 @@ public class UserProfileActivity extends AppCompatActivity {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     cs407.socialkarmaapp.Models.Comment comment = snapshot.getValue(Comment.class);
                     comment.setPostCommentId(snapshot.getKey());
-                    Map<String, Integer> map = currentClientUser.votes.get("postComments");
+                    if (currentUser.votes != null) {
+                        Map<String, Integer> map = currentClientUser.votes.get("postComments");
 
-                    if (map != null && map.get(comment.getPostCommentId()) != null) {
-                        comment.setVoted(currentClientUser.votes.get("postComments").get(comment.getPostCommentId()));
+                        if (map != null && map.get(comment.getPostCommentId()) != null) {
+                            comment.setVoted(currentClientUser.votes.get("postComments").get(comment.getPostCommentId()));
+                        }
                     }
                     commentList.add(comment);
 

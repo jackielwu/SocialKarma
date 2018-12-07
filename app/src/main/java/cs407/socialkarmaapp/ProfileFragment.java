@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -124,6 +125,10 @@ public class ProfileFragment extends Fragment {
                 System.out.println(currentUser.username);
                 karma.setText(("Karma: " + currentUser.karma));
                 username.setText(currentUser.username);
+
+                if (currentUser.votes == null) {
+                    currentUser.votes = new HashMap<>();
+                }
             }
 
             @Override
@@ -472,9 +477,9 @@ public class ProfileFragment extends Fragment {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Post post = snapshot.getValue(Post.class);
                     post.setPostId(snapshot.getKey());
-                    if (currentUser.votes.get("posts") != null && currentUser.votes.get("posts").get(post.getPostId()) != null) {
-                        post.setVoted(currentUser.votes.get("posts").get(post.getPostId()));
-                    }
+//                    if (currentUser.votes != null && currentUser.votes.get("posts") != null && currentUser.votes.get("posts").get(post.getPostId()) != null) {
+//                        post.setVoted(currentUser.votes.get("posts").get(post.getPostId()));
+//                    }
                     list.add(post);
                 }
                 getActivity().runOnUiThread(new Runnable() {
@@ -500,10 +505,12 @@ public class ProfileFragment extends Fragment {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Comment comment = snapshot.getValue(Comment.class);
                     comment.setPostCommentId(snapshot.getKey());
-                    Map<String, Integer> map = currentUser.votes.get("postComments");
-
-                    if (map != null && map.get(comment.getPostCommentId()) != null) {
-                        comment.setVoted(currentUser.votes.get("postComments").get(comment.getPostCommentId()));
+                    if (currentUser.votes != null) {
+//                        Map<String, Integer> map = currentUser.votes.get("postComments");
+//
+//                        if (map != null && map.get(comment.getPostCommentId()) != null) {
+//                            comment.setVoted(currentUser.votes.get("postComments").get(comment.getPostCommentId()));
+//                        }
                     }
                     commentList.add(comment);
 
