@@ -8,6 +8,8 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
@@ -46,7 +48,6 @@ import okhttp3.Response;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
     private GoogleMap mMap;
-
     private static final String TAG = MapFragment.class.getSimpleName();
     private MapView mapView;
     Criteria criteria;
@@ -68,6 +69,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         mapView.onCreate(savedInstanceState);
         mapView.onResume();
         mapView.getMapAsync(this);
+        //getPosts();
+
     }
 
     /**
@@ -134,20 +137,33 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
                             @Override
                             public void onResponse(Call call, Response response) throws IOException {
-                                String body = response.body().string();
-                                Gson gson = new GsonBuilder().create();
+                                final Response a = response;
+                                Handler handler = new Handler(Looper.getMainLooper());
+                                handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        //your code
+                                        try {
+                                            String body = a.body().string();
+                                            Gson gson = new GsonBuilder().create();
 
-                                Post[] postsArray = gson.fromJson(body, Post[].class);
-                                final List<Post> posts= new ArrayList<Post>(Arrays.asList(postsArray));
-                                MapFragment.this.posts = posts;
-                                MarkerOptions options = new MarkerOptions();
+                                            Post[] postsArray = gson.fromJson(body, Post[].class);
+                                            final List<Post> posts = new ArrayList<Post>(Arrays.asList(postsArray));
+                                            MapFragment.this.posts = posts;
+                                            MarkerOptions options = new MarkerOptions();
 
-                                for(Post p: posts){
-                                    LatLng geoloc = new LatLng(p.getCoordinates().get("lat"),p.getCoordinates().get("lng"));
-                                    options.position(geoloc);
-                                    options.title(p.getTitle());
-                                    mMap.addMarker(options);
-                                }
+                                            for (Post p : posts) {
+                                                LatLng geoloc = new LatLng(p.getCoordinates().get("lat"), p.getCoordinates().get("lng"));
+                                                options.position(geoloc);
+                                                options.title(p.getTitle());
+                                                mMap.addMarker(options);
+                                            }
+                                        }catch(IOException e) {
+                                            e.getMessage();
+                                        }
+                                    }
+                                });
+
                             }
                         });
                     }
