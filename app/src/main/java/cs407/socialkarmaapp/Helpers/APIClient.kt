@@ -98,11 +98,12 @@ object APIClient {
         client.newCall(request).enqueue(callback)
     }
 
-    fun postRsvpMeetup(meetupId: String, callback: Callback) {
+    fun postRsvpMeetup(meetupId: String, geolocation: String, callback: Callback) {
         var url = baseURL + "/meetup/rsvp"
         val json = JSONObject()
         json.put("meetupId", meetupId)
         json.put("userId", FirebaseAuth.getInstance().currentUser?.uid)
+        json.put("geolocation", geolocation)
 
         val requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json.toString())
         val request = Request.Builder().url(url).post(requestBody).build()

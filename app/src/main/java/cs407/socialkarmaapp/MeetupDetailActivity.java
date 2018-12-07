@@ -67,7 +67,7 @@ public class MeetupDetailActivity extends AppCompatActivity {
         meetupDetailAdapter = new MeetupDetailAdapter(null, new MeetupDelegate() {
             @Override
             public void rsvpButtonClicked(String meetupId) {
-                APIClient.INSTANCE.postRsvpMeetup(meetupId, new Callback() {
+                APIClient.INSTANCE.postRsvpMeetup(meetupId, geolocation, new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
                         runOnUiThread(new Runnable() {

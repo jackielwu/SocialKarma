@@ -54,6 +54,7 @@ public class MeetupActivity extends Fragment {
     private Integer lastStartTime;
     private SwipeRefreshLayout refreshLayout;
     private FusedLocationProviderClient mFusedLocationClient;
+    private String geolocation;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
@@ -63,7 +64,7 @@ public class MeetupActivity extends Fragment {
         meetupAdapter = new MeetupAdapter(new ArrayList<Meetup>(), EmptyContentViewHolder.EmptyContentType.NOTEMPTY, getActivity(), new MeetupDelegate() {
             @Override
             public void rsvpButtonClicked(String meetupId) {
-                APIClient.INSTANCE.postRsvpMeetup(meetupId, new Callback() {
+                APIClient.INSTANCE.postRsvpMeetup(meetupId, geolocation, new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
                         getActivity().runOnUiThread(new Runnable() {
@@ -143,6 +144,7 @@ public class MeetupActivity extends Fragment {
                             map = (Map<String, String>) gson.fromJson(body, map.getClass());
                             String geolocation = map.get("geo");
 
+                            MeetupActivity.this.geolocation = geolocation;
                             if (geolocation != null) {
                                 APIClient.INSTANCE.getMeetups(geolocation, lastStartTime, new Callback() {
                                     @Override
