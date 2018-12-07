@@ -43,9 +43,14 @@ object APIClient {
         }
     }
 
-    fun getMeetupDetail(meetupId: String, callback: Callback) {
-        var url = baseURL + "/meetup/" + meetupId + "?userId=" + FirebaseAuth.getInstance().currentUser?.uid
-        val request = Request.Builder().url(url).build()
+    fun getMeetupDetail(meetupId: String, geolocation: String, callback: Callback) {
+        var url = baseURL + "/meetupDetail?userId=" + FirebaseAuth.getInstance().currentUser?.uid
+        var json = JSONObject()
+        json.put("meetupId", meetupId)
+        json.put("geolocation", geolocation)
+
+        val requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json.toString())
+        val request = Request.Builder().url(url).post(requestBody).build()
         val client = OkHttpClient()
         client.newCall(request).enqueue(callback)
     }

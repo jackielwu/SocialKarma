@@ -45,6 +45,17 @@ class ChatsAdapter(private var chats: MutableList<Chat>, private var emptyConten
         this.notifyDataSetChanged()
     }
 
+    override fun getItemViewType(position: Int): Int {
+        when (emptyContentType) {
+            EmptyContentViewHolder.EmptyContentType.NOTEMPTY -> {
+                return 0
+            }
+            else -> {
+                return 1
+            }
+        }
+    }
+
     override fun getItemCount(): Int {
         when (emptyContentType) {
             EmptyContentViewHolder.EmptyContentType.NOTEMPTY -> {

@@ -147,6 +147,7 @@ class MeetupViewHolder(val view: View): RecyclerView.ViewHolder(view) {
             val meetup = meetups.get(index)
             intent.putExtra(MeetupActivity.EXTRA_MEETUP, meetup.meetupId)
             intent.putExtra(MeetupActivity.EXTRA_MEETUP_TITLE, meetup.title)
+            intent.putExtra(MeetupActivity.EXTRA_MEETUP_GEOLOCATION, meetup.geolocation)
             context.startActivity(intent)
         }
     }

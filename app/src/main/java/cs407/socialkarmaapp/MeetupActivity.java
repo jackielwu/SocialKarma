@@ -46,6 +46,7 @@ import static com.google.android.gms.location.LocationServices.getFusedLocationP
 public class MeetupActivity extends Fragment {
     public static final String EXTRA_MEETUP = "cs407.socialkarmaapp.MEETUP";
     public static final String EXTRA_MEETUP_TITLE = "cs407.socialkarmaapp.MEETUP_TITLE";
+    public static final String EXTRA_MEETUP_GEOLOCATION = "cs407.socialkarmaapp.MEETUP_GEOLOCATION";
 
     private RecyclerView meetupRecyclerView;
     private MeetupAdapter meetupAdapter;

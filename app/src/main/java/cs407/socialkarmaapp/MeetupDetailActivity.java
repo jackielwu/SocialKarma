@@ -30,6 +30,7 @@ public class MeetupDetailActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private String meetupId;
     private String meetupTitle;
+    private String geolocation;
 
     private RecyclerView detailRecyclerView;
     private MeetupDetailAdapter meetupDetailAdapter;
@@ -42,6 +43,7 @@ public class MeetupDetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
         meetupId = intent.getStringExtra(MeetupActivity.EXTRA_MEETUP);
         meetupTitle = intent.getStringExtra(MeetupActivity.EXTRA_MEETUP_TITLE);
+        geolocation = intent.getStringExtra(MeetupActivity.EXTRA_MEETUP_GEOLOCATION);
 
         setupToolbar();
         setupViews();
@@ -87,7 +89,7 @@ public class MeetupDetailActivity extends AppCompatActivity {
     }
 
     private void setupDetails() {
-        APIClient.INSTANCE.getMeetupDetail(this.meetupId, new Callback() {
+        APIClient.INSTANCE.getMeetupDetail(this.meetupId, geolocation, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 runOnUiThread(new Runnable() {

@@ -22,6 +22,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.KeyCharacterMap;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
@@ -123,9 +125,17 @@ public class ChatMessagesActivity extends Activity {
         Resources resources = this.getResources();
         int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
         int nHeight = 0;
+
+//        boolean hasBackKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK);
+//        boolean hasHomeKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_HOME);
+//
+//        if (hasBackKey && hasHomeKey) {
+//        } else {
         if (resourceId > 0) {
             nHeight = resources.getDimensionPixelSize(resourceId);
         }
+//        }
+
         final int navHeight = nHeight;
         final View rootView = getWindow().getDecorView().getRootView();
         final ConstraintLayout constraintLayout = findViewById(R.id.activity_layout_chat_messages);
