@@ -71,7 +71,7 @@ class MeetupAdapter(private var meetups: MutableList<Meetup>, private var emptyT
                 (p0 as MeetupViewHolder).didSelectRow(meetups, p1, context)
             }
             EmptyContentViewHolder.EmptyContentType.ERROR -> {
-                (p0 as EmptyContentViewHolder).setupView("There seemed to be an error loading meetups.\nPlease try again.", emptyType)
+                (p0 as EmptyContentViewHolder).setupView("There seemed to be an error loading meetups.", emptyType)
             }
             EmptyContentViewHolder.EmptyContentType.EMPTY -> {
                 (p0 as EmptyContentViewHolder).setupView("There seems to be no upcoming meetups\nin the area right now.\n\nAdd one of your own using the '+' button!", emptyType)

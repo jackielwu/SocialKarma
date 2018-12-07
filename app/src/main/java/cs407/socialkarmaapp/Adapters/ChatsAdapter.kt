@@ -89,7 +89,7 @@ class ChatsAdapter(private var chats: MutableList<Chat>, private var emptyConten
                 (p0 as ChatViewHolder).didSelectRow(chats, p1, context)
             }
             EmptyContentViewHolder.EmptyContentType.ERROR -> {
-                (p0 as EmptyContentViewHolder).setupView("There seemed to be an error loading your messages.\nPlease try again.", emptyContentType)
+                (p0 as EmptyContentViewHolder).setupView("There seemed to be an error loading your messages.", emptyContentType)
             }
             EmptyContentViewHolder.EmptyContentType.EMPTY -> {
                 (p0 as EmptyContentViewHolder).setupView("You don't have any messages right now.\nStart a conversation using the '+' button!", emptyContentType)

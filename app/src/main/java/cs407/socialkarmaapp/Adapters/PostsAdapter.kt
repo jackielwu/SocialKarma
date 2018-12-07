@@ -156,7 +156,7 @@ class PostsAdapter(private var posts: MutableList<Post>, private val context: Co
                 }
             }
             EmptyContentViewHolder.EmptyContentType.ERROR -> {
-                (p0 as EmptyContentViewHolder).setupView("There seemed to be an error loading posts.\nPlease try again.", emptyContentType)
+                (p0 as EmptyContentViewHolder).setupView("There seemed to be an error loading posts.", emptyContentType)
             }
             EmptyContentViewHolder.EmptyContentType.EMPTY -> {
                 (p0 as EmptyContentViewHolder).setupView("There seems to be no posts\nin the area right now.\n\nAdd one of your own using the '+' button!", emptyContentType)

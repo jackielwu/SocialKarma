@@ -133,10 +133,26 @@ public class MeetupActivity extends Fragment {
                         @Override
                         public void onFailure(Call call, IOException e) {
                             System.out.println("Could not get a geolocation.");
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    meetupAdapter.setEmptyType(EmptyContentViewHolder.EmptyContentType.EMPTY);
+                                }
+                            });
                         }
 
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
+                            if (response.code() >= 400) {
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+//                                        progressBar.setVisibility(View.GONE);
+                                        meetupAdapter.setEmptyType(EmptyContentViewHolder.EmptyContentType.ERROR);
+                                    }
+                                });
+                                return;
+                            }
                             String body = response.body().string();
                             Gson gson = new GsonBuilder().create();
 

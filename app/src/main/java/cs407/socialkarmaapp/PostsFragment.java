@@ -252,6 +252,16 @@ public class PostsFragment extends Fragment implements SortByDelegate {
 
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
+                        if (response.code() >= 400) {
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    progressBar.setVisibility(View.GONE);
+                                    adapter.setType(EmptyContentViewHolder.EmptyContentType.ERROR);
+                                }
+                            });
+                            return;
+                        }
                         String body = response.body().string();
                         Gson gson = new GsonBuilder().create();
 
