@@ -26,6 +26,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
@@ -139,6 +140,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                 Post[] postsArray = gson.fromJson(body, Post[].class);
                                 final List<Post> posts= new ArrayList<Post>(Arrays.asList(postsArray));
                                 MapFragment.this.posts = posts;
+                                MarkerOptions options = new MarkerOptions();
+
+                                for(Post p: posts){
+                                    LatLng geoloc = new LatLng(p.getCoordinates().get("lat"),p.getCoordinates().get("lng"));
+                                    options.position(geoloc);
+                                    options.title(p.getTitle());
+                                    mMap.addMarker(options);
+                                }
                             }
                         });
                     }

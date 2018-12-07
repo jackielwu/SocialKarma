@@ -155,8 +155,8 @@ public class ChatMessagesActivity extends Activity {
             public void onClick(View v) {
                 final FirebaseUser currUser = FirebaseAuth.getInstance().getCurrentUser();
                 if (currUser != null) {
-                    Log.e("tag", currUser.getUid());
-                    if (partner.chatMembers.get(currUser.getUid()) != null) {
+
+                    if (partner == null) {
                         APIClient.INSTANCE.postMessage(chatId, messageEditText.getText().toString(), new Callback() {
                             @Override
                             public void onFailure(Call call, IOException e) {
@@ -195,7 +195,9 @@ public class ChatMessagesActivity extends Activity {
                                 Chat newChat = gson.fromJson(body, Chat.class);
                                 chat = newChat;
                                 chatId = newChat.getChatId();
-                                partner.chatMembers.put(currUser.getUid(), chatId);
+                                if (partner != null) {
+                                    partner.chatMembers.put(currUser.getUid(), chatId);
+                                }
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
