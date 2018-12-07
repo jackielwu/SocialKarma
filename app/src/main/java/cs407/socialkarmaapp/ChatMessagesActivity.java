@@ -20,6 +20,7 @@ import android.support.constraint.ConstraintSet;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -154,6 +155,7 @@ public class ChatMessagesActivity extends Activity {
             public void onClick(View v) {
                 final FirebaseUser currUser = FirebaseAuth.getInstance().getCurrentUser();
                 if (currUser != null) {
+                    Log.e("tag", currUser.getUid());
                     if (partner.chatMembers.get(currUser.getUid()) != null) {
                         APIClient.INSTANCE.postMessage(chatId, messageEditText.getText().toString(), new Callback() {
                             @Override
@@ -310,6 +312,7 @@ public class ChatMessagesActivity extends Activity {
 
     private void setChatReadReceipt() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        Log.e("tag",currentUser.getUid());
         if (currentUser != null && !chat.getLastSentUser().equals(currentUser.getUid())) {
             chatRef.child("readReceipt").setValue(true);
         }
