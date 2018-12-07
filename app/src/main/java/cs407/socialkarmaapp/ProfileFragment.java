@@ -133,9 +133,46 @@ public class ProfileFragment extends Fragment {
 
         commentAdapter = new CommentsAdapter(commentList, getActivity(), new CommentAdapterDelegate() {
             @Override
-            public void deleteComment(@NotNull Comment comment, int atIndex) {
-                String commentId = comment.getPostCommentId();
-                // TODO
+            public void deleteComment(@NotNull Comment comment, final int atIndex) {
+                final Comment c = comment;
+                // Use the Builder class for convenient dialog construction
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage("Are you sure you would like to delete this comment?")
+                        .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                APIClient.INSTANCE.postDeleteComment(c.getPostCommentId(), new Callback() {
+                                    @Override
+                                    public void onFailure(Call call, IOException e) {
+                                        getActivity().runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Toast.makeText(getActivity(), "Failed to delete this comment", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                    }
+
+                                    @Override
+                                    public void onResponse(Call call, Response response) throws IOException {
+                                        if (response.code() >= 400) {
+                                            return;
+                                        }
+                                        getActivity().runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                commentAdapter.removeComment(atIndex);
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                            }
+                        });
+                // Create the AlertDialog object and return it
+                Dialog dialog = builder.create();
+                dialog.show();
             }
 
             @Override
@@ -204,10 +241,49 @@ public class ProfileFragment extends Fragment {
             }
         }, true);
         postsAdapter = new PostsAdapter(list, getActivity(),new PostAdapterDelegate() {
+
             @Override
-            public void deletePost(@NotNull Post post, int atIndex) {
-                String postId = post.getPostId();
-                //TODO
+            public void deletePost(@NotNull Post post, final int atIndex) {
+                final Post p = post;
+                // Use the Builder class for convenient dialog construction
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage("Are you sure you would like to delete this post?")
+                        .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                APIClient.INSTANCE.postDeletePost(p.getPostId(), new Callback() {
+                                    @Override
+                                    public void onFailure(Call call, IOException e) {
+                                        getActivity().runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Toast.makeText(getActivity(), "Failed to delete this post", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                    }
+
+                                    @Override
+                                    public void onResponse(Call call, Response response) throws IOException {
+                                        if (response.code() >= 400) {
+                                            return;
+                                        }
+                                        getActivity().runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                postsAdapter.removePost(atIndex);
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                            }
+                        });
+                // Create the AlertDialog object and return it
+                Dialog dialog = builder.create();
+
+                dialog.show();
             }
 
             @Override

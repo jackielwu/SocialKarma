@@ -55,7 +55,7 @@ class PostsAdapter(private var posts: MutableList<Post>, private val context: Co
 
     fun removePost(atIndex: Int) {
         this.posts.removeAt(atIndex)
-        this.notifyItemRemoved(atIndex)
+        this.notifyItemRemoved(atIndex + 1)
     }
 
     override fun getItemCount(): Int {

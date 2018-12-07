@@ -42,7 +42,7 @@ class CommentsAdapter(private var comments: MutableList<Comment>, private val co
 
     fun removeComment(atIndex: Int) {
         this.comments.removeAt(atIndex)
-        this.notifyItemRemoved(atIndex)
+        this.notifyItemRemoved(atIndex + 1)
     }
 
     override fun getItemCount(): Int {
