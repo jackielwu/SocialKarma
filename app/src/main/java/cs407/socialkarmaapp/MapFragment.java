@@ -2,6 +2,7 @@ package cs407.socialkarmaapp;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.location.Criteria;
@@ -105,6 +106,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
             getPosts();
         }
+
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                int index = (int)marker.getTag();
+                Post post = MapFragment.this.posts.get(index);
+                Intent intent = new Intent(getContext(), PostActivity.class);
+                intent.putExtra(PostsFragment.EXTRA_POST_OBJ, post);
+                getContext().startActivity(intent);
+            }
+        });
         //mMap.moveCamera(CameraUpdateFactory.newLatLng(myLatLng));
     }
 
@@ -154,11 +166,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                             MapFragment.this.posts = posts;
                                             MarkerOptions options = new MarkerOptions();
 
+                                            int index = 0;
                                             for (Post p : posts) {
                                                 LatLng geoloc = new LatLng(p.getCoordinates().get("lat"), p.getCoordinates().get("lng"));
                                                 options.position(geoloc);
                                                 options.title(p.getTitle());
-                                                mMap.addMarker(options);
+                                                mMap.addMarker(options).setTag(index);
+                                                index++;
                                             }
                                         }catch(IOException e) {
                                             e.getMessage();
